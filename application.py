@@ -26,7 +26,6 @@ app.config['BASIC_AUTH_PASSWORD'] = 'qwerty'
 @app.route('/index')
 def index():
     # Read Sensors Status
-    # #TODO Change this to live data???????????
     template_data = {
         'relay1_Sts': rp1.get_status(rp1.relay1),
         'relay2_Sts': rp1.get_status(rp1.relay2),
