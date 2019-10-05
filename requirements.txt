@@ -1,0 +1,9 @@
+
+#TODO
+
+rpi.gpio
+flask
+flask-basicauth
+flask-wtf
+wtforms
+datetime

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+   <head>
+	  <title>Set Auto-Mode</title>
+	
+	  {% with messages = get_flashed_messages() %}
+  	{% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  	{% endif %}
+	{% endwith %}
+
+	<link rel="stylesheet" href="../../static/style.css/">
+   </head>
+
+   <body>
+		<h1>Raspberry 1</h1>
+		
+			<br>
+			<h2> Set Auto-Mode </h2>
+		
+
+            <div style="float: left;">
+                <form action="/set_auto" method="POST">
+                    <fieldset>
+                    <table width=200 >
+                        <legend width=220>Auto-Mode</legend>
+                                <tr>
+                                    <td>
+                                    <input type="number" name="temperature" min="0" max="45" > C° (Temperature)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input type="number" name="temp_range" min="1" max="5"> ∓ C° (Range)
+                                    </td>
+
+                                </tr>
+                            <tr>
+                                <td>
+                                    <br>
+                                    <input type="submit" value="Set Auto-Mode">
+                                </td>
+                                
+                            </tr>
+                    </table>
+                </fieldset>
+              </form>
+            </div>
+   </body>
+   
+
+	
+
+
+</html>

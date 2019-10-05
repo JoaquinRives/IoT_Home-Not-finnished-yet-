@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+   <head>
+	  <title>GPIO Control</title>
+	
+	  {% with messages = get_flashed_messages() %}
+  	{% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  	{% endif %}
+	{% endwith %}
+
+
+	<div style="float: right;">
+			<div id="cont_72a1a15f9e90423f2adcd14624df284f"><script type="text/javascript" async src="https://www.theweather.com/wid_loader/72a1a15f9e90423f2adcd14624df284f"></script></div>
+	</div>
+	
+	<div>
+		<br>
+		<iframe src="http://free.timeanddate.com/clock/i6yru88u/n296/fs16/pct/pd2/tt0/tm1/td2/th1/tb4" frameborder="0" width="191" height="40" allowTransparency="true"></iframe>
+	</div>
+
+	<link rel="stylesheet" href="../static/style.css/">
+   </head>
+   <body>
+		<h1>Raspberry 1</h1>
+		
+			<h2> Relays (Status & Control) </h2>
+		<table>
+			<tr >
+				<td width=85>
+					<h3> Light ({{ relay1_Sts[0]  }}) </h3>
+				</td>
+				<td width=70>
+					{% if  relay1_Sts[1]  == 'auto' or relay1_Sts[1]  == 'timer' %}
+						<img src="{{url_for('static', filename='light_auto_icon3.jpg')}}" />					
+					{% elif  relay1_Sts[0]  == 'Off' %}
+						<img src="{{url_for('static', filename='light_off_icon3.jpg')}}" />
+					{% else %}
+						<img src="{{url_for('static', filename='light_on_icon3.jpg')}}" />
+					{% endif %}
+				</td>
+				<td width=90 >
+					{% if  relay1_Sts[0]   == 'On' %}
+						<a href="/Relays/1/Off"class="button">TURN OFF</a>
+					{% else %}
+						<a href="/Relays/1/On" class="button">TURN ON</a>
+					{% endif %}
+				</td>
+				<td width=68>
+					<a href="/timer/Relays/1"class="button">TIMER</a>
+				</td>	
+			</tr>
+			<tr>
+				<td>
+					<h3> 
+						Heater ({{ 'Auto' if relay2_Sts[1] == 'auto' else relay2_Sts[0]  }})
+					</h3>
+				</td>
+				<td>
+					{% if relay2_Sts[1] == 'auto' or relay2_Sts[1] == 'timer' %}
+						<img src="{{url_for('static', filename='light_auto_icon3.jpg')}}" /> 
+					{% elif  relay2_Sts[0]  == 'Off' %}
+						<img src="{{url_for('static', filename='light_off_icon3.jpg')}}" />
+					{% else %}
+						<img src="{{url_for('static', filename='light_on_icon3.jpg')}}" />
+					{% endif %}
+				</td>	
+				<td>
+					{% if  relay2_Sts[0]   == 'On' %}
+						<a href="/Relays/2/Off"class="button">TURN OFF</a>
+					{% else %}
+						<a href="/Relays/2/On" class="button">TURN ON</a>
+					{% endif %}
+				</td>
+				<td>
+					<a href="/timer/Relays/2"class="button">TIMER</a>
+				</td>
+				<td>
+					<a href="/auto/Relays/2"class="button">AUTO</a>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<h3> Device 1 ({{ relay3_Sts[0]  }}) </h3>
+				</td>
+				<td>
+						{% if relay3_Sts[1] == 'auto' or relay3_Sts[1] == 'timer' %}
+							<img src="{{url_for('static', filename='light_auto_icon3.jpg')}}" />
+						{% elif  relay3_Sts[0]  == 'Off' %}
+							<img src="{{url_for('static', filename='light_off_icon3.jpg')}}" />
+						{% else %}
+							<img src="{{url_for('static', filename='light_on_icon3.jpg')}}" />
+						{% endif %}
+				</td>
+				<td>
+					{% if  relay3_Sts[0]   == 'On' %}
+						<a href="/Relays/3/Off"class="button">TURN OFF</a>
+					{% else %}
+						<a href="/Relays/3/On" class="button">TURN ON</a>
+					{% endif %}
+				</td>
+				<td>
+					<a href="/timer/Relays/3"class="button">TIMER</a>
+				</td>	
+			</tr>
+			<tr>
+				<td>
+					<h3> Device 2 ({{ relay4_Sts[0]  }})</h3>
+				</td>
+				<td>
+						{% if relay4_Sts[1] == 'auto' or relay4_Sts[1] == 'timer' %}
+							<img src="{{url_for('static', filename='light_auto_icon3.jpg')}}" />
+						{% elif  relay4_Sts[0]  == 'Off' %}
+							<img src="{{url_for('static', filename='light_off_icon3.jpg')}}" />
+						{% else %}
+							<img src="{{url_for('static', filename='light_on_icon3.jpg')}}" />
+						{% endif %}
+				</td>
+				<td>
+					{% if  relay4_Sts[0]   == 'On' %}
+						<a href="/Relays/4/Off"class="button">TURN OFF</a>
+					{% else %}
+						<a href="/Relays/4/On" class="button">TURN ON</a>
+					{% endif %}
+				</td>
+				<td>
+					<a href="/timer/Relays/4"class="button">TIMER</a>
+				</td>	
+			</tr>
+		</table>
+		<br>
+		
+   </body>
+</html>

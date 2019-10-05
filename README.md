@@ -35,4 +35,3 @@ Additional resources:
   https://www.amazon.co.uk/gp/product/B07PMQK528/ref=ppx_yo_dt_b_asin_title_o01_s00?ie=UTF8&psc=1
   -	Sensor Hub: 
   https://www.amazon.co.uk/gp/product/B07TZD8B61/ref=ppx_yo_dt_b_asin_title_o01_s00?ie=UTF8&psc=1
-
