@@ -123,7 +123,6 @@ def set_timer():
     unit = session.get('unit_timer', None)
     actuator = session.get('actuator_timer', None)
 
-    print(form.errors)
     if request.method == 'POST':
         time_on = request.form['time_on']
         time_off = request.form['time_off']
@@ -132,7 +131,6 @@ def set_timer():
         except:
             repeat = 'off'
 
-        print(time_on, time_off, repeat)
         rp1.timer_settings[actuator] = (time_on, time_off, repeat)
 
         # Check if the Auto-Mode is running:
@@ -187,8 +185,6 @@ def set_auto():
     if request.method == 'POST':
         temperature = request.form['temperature']
         temp_range = request.form['temp_range']
-
-        print(temperature, temp_range, unit, actuator)
 
         rp1.auto_settings[actuator] = (temperature, temp_range)
 
