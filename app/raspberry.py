@@ -1,10 +1,10 @@
 from flask import flash
 import RPi.GPIO as GPIO
 import threading
-from auto_mode import auto_func
-from timer import timer_func
+from app.auto_mode import auto_func
+from app.timer import timer_func
 import logging
-from logger import set_logger
+from app.logger import set_logger
 
 logger = logging.getLogger(__name__)
 logger = set_logger(logger)

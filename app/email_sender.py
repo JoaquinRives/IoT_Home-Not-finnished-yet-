@@ -5,7 +5,7 @@ from email.mime.multipart import MIMEMultipart, MIMEBase
 from email.utils import parseaddr, formataddr
 import smtplib
 import logging
-from logger import set_logger
+from app.logger import set_logger
 
 logger = logging.getLogger(__name__)  # TODO
 logger = set_logger(logger)

@@ -1,6 +1,6 @@
 import logging
 import os
-from config import config
+from app.config import config
 
 
 FORMAT = logging.Formatter(
