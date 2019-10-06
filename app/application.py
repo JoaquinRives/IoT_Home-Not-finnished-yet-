@@ -9,20 +9,15 @@ logger = logging.getLogger(__name__)
 logger = set_logger(logger)
 
 
-def create_app():
+def create_app(*, config_object):
     """Create a flask app instance."""
 
     flask_app = Flask('app')
-    #flask_app.config.from_object(config_object) # TODO
-
-    flask_app.config['BASIC_AUTH_FORCE'] = True
-    flask_app.config['SECRET_KEY'] = "powerful secret key"
+    flask_app.config.from_object(config_object)
 
     # Basic Authentication ("Sign in" security to have access to the app)
     basic_auth = BasicAuth(flask_app)
 
-    flask_app.config['BASIC_AUTH_USERNAME'] = 'joaquin'
-    flask_app.config['BASIC_AUTH_PASSWORD'] = 'qwerty'
 
     # import blueprints
     from app.controller import app

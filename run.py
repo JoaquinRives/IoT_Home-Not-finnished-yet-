@@ -1,14 +1,10 @@
 from app.application import create_app
-# from flask_basicauth import BasicAuth
-
-application = create_app()
+from app.config.config import DevelopmentConfig, ProductionConfig
 
 
-
-# # Basic Authentication
-# basic_auth = BasicAuth(flask_app)
-
+application = create_app(
+    config_object=DevelopmentConfig)
 
 
 if __name__ == '__main__':
-    application.run(host='0.0.0.0', port=80, debug=True)
+    application.run()
