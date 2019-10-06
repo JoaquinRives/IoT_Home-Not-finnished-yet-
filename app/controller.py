@@ -190,7 +190,6 @@ def set_auto():
     unit = session.get('unit_auto', None)
     actuator = session.get('actuator_auto', None)
 
-    print(form.errors)
     if request.method == 'POST':
         temperature = request.form['temperature']
         temp_range = request.form['temp_range']

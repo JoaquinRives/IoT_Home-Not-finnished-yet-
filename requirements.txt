@@ -1,8 +1,10 @@
 
 #TODO
 
-rpi.gpio
-flask
+# rpi.gpio (sudo apt-get install rpi.gpio)
+
+python==3.7.3
+flask==1.0.2
 flask-basicauth
 flask-wtf
 wtforms
