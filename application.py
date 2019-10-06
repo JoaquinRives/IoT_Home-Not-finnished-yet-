@@ -6,10 +6,18 @@ import RPi.GPIO as GPIO
 from forms import Timer_form, Auto_form
 from flask import Flask, session
 import time
+import logging
+from logger import set_logger
+
+# Configure logger
+logger = logging.getLogger(__name__)
+logger = set_logger(logger)
 
 
+# Create a instance the Raspberry
 rp1 = Raspberry_1()
 
+# App
 app = Flask(__name__)
 
 app.config['BASIC_AUTH_FORCE'] = True
@@ -25,7 +33,7 @@ app.config['BASIC_AUTH_PASSWORD'] = 'qwerty'
 @app.route("/")
 @app.route('/index')
 def index():
-    # Read Sensors Status
+    # Read GPIOs Status
     template_data = {
         'relay1_Sts': rp1.get_status(rp1.relay1),
         'relay2_Sts': rp1.get_status(rp1.relay2),
