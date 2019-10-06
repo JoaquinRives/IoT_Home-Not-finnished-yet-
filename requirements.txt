@@ -3,7 +3,8 @@
 
 # rpi.gpio (sudo apt-get install rpi.gpio)
 
-python==3.7.3
+#python==3.7.3
+#pytest
 flask==1.0.2
 flask-basicauth
 flask-wtf
