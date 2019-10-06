@@ -3,6 +3,11 @@ import RPi.GPIO as GPIO
 import threading
 from auto_mode import auto_func
 from timer import timer_func
+import logging
+from logger import set_logger
+
+logger = logging.getLogger(__name__)
+logger = set_logger(logger)
 
 
 class Raspberry_1:
@@ -74,8 +79,12 @@ class Raspberry_1:
         self.timer_threads[gpio] = threading.Thread(target=timer_func, args=((gpio,) + self.timer_settings[gpio]))
         self.timer_threads[gpio].start()
         self.set_status(gpio, 'timer')
+        
         flash(f'Timer activated: {self.timer_settings[gpio][0]} (ON) - {self.timer_settings[gpio][1]} (Off), '
                 f'Repeat: {self.timer_settings[gpio][2]}')
+        logger.info(f'Timer activated: {self.timer_settings[gpio][0]} (ON) - {self.timer_settings[gpio][1]} (Off), '
+                f'Repeat: {self.timer_settings[gpio][2]}')
+        
 
 
 
@@ -83,7 +92,9 @@ class Raspberry_1:
         self.auto_threads[gpio] = threading.Thread(target=auto_func, args=((gpio,) + self.auto_settings[gpio]))
         self.auto_threads[gpio].start()
         self.set_status(gpio, 'auto')
+        
         flash(f'Auto-Mode activated : {self.auto_settings[gpio][0]}∓{self.auto_settings[gpio][1]} C°')
+        logger.info(f'Auto-Mode activated : {self.auto_settings[gpio][0]}∓{self.auto_settings[gpio][1]} C°')
 
 
     def stop_timer(self, gpio):
@@ -92,7 +103,10 @@ class Raspberry_1:
             self.timer_threads[gpio].join()
             self.timer_threads[gpio] = None
             self.set_status(gpio, 'normal')
+            
             flash("Timer deactivated!")
+            logger.info("Timer deactivated!")
+
 
     def stop_auto(self, gpio):
         if self.auto_threads[gpio]:
@@ -100,7 +114,9 @@ class Raspberry_1:
             self.auto_threads[gpio].join()
             self.auto_threads[gpio] = None
             self.set_status(gpio, 'normal')
+            
             flash("Auto-Mode deactivated!")
+            logger.info("Auto-Mode deactivated!")
 
     # Reset RPi GPIOs
     def clean_up(self):

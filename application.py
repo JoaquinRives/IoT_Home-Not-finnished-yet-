@@ -9,12 +9,10 @@ import time
 import logging
 from logger import set_logger
 
-# Configure logger
 logger = logging.getLogger(__name__)
 logger = set_logger(logger)
 
-
-# Create a instance the Raspberry
+# Create a instance of the Raspberry
 rp1 = Raspberry_1()
 
 # App
@@ -46,6 +44,8 @@ def index():
 @app.route("/<deviceName>/<unit>/<action>")
 def actions(deviceName, unit, action):
     
+    logger.info(f'=> /{deviceName}/{unit}/{action}')
+
     # Devices
     if deviceName == 'Relays':
         
@@ -94,6 +94,8 @@ def actions(deviceName, unit, action):
 @app.route("/timer/<deviceName>/<unit>", methods=['GET', 'POST'])
 def timer(deviceName, unit):
     
+    logger.info(f'=> /timer/{deviceName}/{unit}')
+
     # Devices
     if deviceName == 'Relays':
         # Units
@@ -151,6 +153,8 @@ def set_timer():
 @app.route("/auto/<deviceName>/<unit>", methods=['GET', 'POST'])
 def auto(deviceName, unit):
     
+    logger.info(f'=> /auto/{deviceName}/{unit}')
+
     # Devices
     if deviceName == 'Relays':
         # Units
@@ -176,7 +180,7 @@ def auto(deviceName, unit):
         session['unit_auto'] = unit 
         session['actuator_auto'] = actuator
 
-        return render_template('set_auto.html') #**template_data)
+        return render_template('set_auto.html')
 
 
 @app.route("/set_auto", methods=['GET', 'POST'])

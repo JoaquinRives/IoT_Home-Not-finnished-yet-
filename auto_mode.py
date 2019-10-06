@@ -23,5 +23,4 @@ def auto_func(actuator, temp, t_range):
             t_now += 1
         else:
             t_now -= 1
-        print(t_now)
         time.sleep(1)

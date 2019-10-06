@@ -4,6 +4,11 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart, MIMEBase
 from email.utils import parseaddr, formataddr
 import smtplib
+import logging
+from logger import set_logger
+
+logger = logging.getLogger(__name__)  # TODO
+logger = set_logger(logger)
 
 
 from_addr = 'email@gmail.com'
