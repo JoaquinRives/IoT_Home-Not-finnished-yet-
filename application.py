@@ -6,6 +6,7 @@ import RPi.GPIO as GPIO
 from forms import Timer_form, Auto_form
 from flask import Flask, session
 import time
+import atexit
 import logging
 from logger import set_logger
 
@@ -205,6 +206,9 @@ def set_auto():
                     rp1.stop_timer(actuator)
 
     return redirect(f"/{deviceName}/{unit}/auto")
+
+# Reset the GPIOs before exit the App
+atexit.register(rp1.clean_up)
 
 
 if __name__ == "__main__":

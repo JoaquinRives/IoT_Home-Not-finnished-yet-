@@ -55,8 +55,9 @@ class Raspberry_1:
         self.set_status(self.relay3, 'normal')
         self.set_status(self.relay4, 'normal')
 
-    # Set GPIO output
+    
     def set_gpio(self, gpio, output): 
+        """ Set GPIO output """
         if output == 'low':
             GPIO.output(gpio, GPIO.LOW)
         if output == 'high':
@@ -118,7 +119,7 @@ class Raspberry_1:
             flash("Auto-Mode deactivated!")
             logger.info("Auto-Mode deactivated!")
 
-    # Reset RPi GPIOs
     def clean_up(self):
+        """ Reset RPi GPIOs """
         GPIO.cleanup()
 
