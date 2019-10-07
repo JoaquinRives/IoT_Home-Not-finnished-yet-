@@ -4,22 +4,22 @@ import threading
 from app.auto_mode import auto_func
 from app.timer import timer_func
 import logging
-from app.config.config import config_logger
+from app.config import config
 
 logger = logging.getLogger(__name__)
-logger = config_logger(logger)
+logger = config.config_logger(logger)
 
 
 class Raspberry_1:
     def __init__(self):
         # Set RPi GPIO board mode
-        GPIO.setmode(GPIO.BCM)
+        GPIO.setmode(config.BOARD_MODE)
 
         # Define GPIOs Relay
-        self.relay1 = 5  # Light
-        self.relay2 = 6  # Heater
-        self.relay3 = 13
-        self.relay4 = 19
+        self.relay1 = config.RELAY_1  # Light
+        self.relay2 = config.RELAY_2  # Heater
+        self.relay3 = config.RELAY_3
+        self.relay4 = config.RELAY_4
 
         # GPIOs Status (Off/On, normal/timer/auto)
         self.gpios_Sts =  [(None, None) for i in range(28)]
@@ -28,12 +28,12 @@ class Raspberry_1:
         self.set_relays()
 
         # Timer
-        self.relays_with_timer = [self.relay1, self.relay2, self.relay3, self.relay4]
+        self.relays_with_timer = config.RELAYS_WITH_TIMER
         self.timer_threads = [None for i in range(28)]  # Timer: One thread for each GPIO of the raspberry
         self.timer_settings = [(None, None, None) for i in range(28)]
 
         # Auto-Mode
-        self.relays_with_auto = [self.relay2]
+        self.relays_with_auto = config.RELAYS_WITH_AUTO
         self.auto_threads = [None for i in range(28)]  # Automatic-mode (Heater): One thread for each GPIO of the raspberry
         self.auto_settings = [(None, None) for i in range(28)]
 

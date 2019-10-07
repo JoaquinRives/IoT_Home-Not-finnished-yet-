@@ -1,6 +1,7 @@
 import os
 import pathlib
 import logging
+import RPi.GPIO as GPIO
 
 # Path to config file
 PATH_CONFIG = pathlib.Path(__file__).resolve().parent
@@ -68,3 +69,15 @@ def config_logger(logger):
     logger.propagate = False
 
     return logger
+
+
+# Raspberry_Pi configuration
+BOARD_MODE = GPIO.BCM
+
+RELAY_1 = 5  # Light
+RELAY_2 = 6  # Heater
+RELAY_3 = 13
+RELAY_4 = 19
+
+RELAYS_WITH_AUTO = [RELAY_2]
+RELAYS_WITH_TIMER = [RELAY_1, RELAY_2, RELAY_3, RELAY_4]
