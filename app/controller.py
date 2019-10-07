@@ -1,5 +1,5 @@
 from flask import request, render_template, redirect, Blueprint, session
-from app.raspberry_classes import Raspberry_1
+from app.raspberry_classes import Raspberry1
 from app.forms import Timer_form, Auto_form
 import time
 import atexit
@@ -12,7 +12,7 @@ logger = config_logger(logger)
 app = Blueprint('app', __name__)
 
 # Create a instance of the Raspberry
-rp1 = Raspberry_1()
+rp1 = Raspberry1()
 
 
 @app.route('/health', methods=['GET'])

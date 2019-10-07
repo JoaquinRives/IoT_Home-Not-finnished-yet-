@@ -1,7 +1,7 @@
 import base64
-from app.raspberry_classes import Raspberry_1
+from app.raspberry_classes import Raspberry1
 
-rp1 = Raspberry_1()
+rp1 = Raspberry1()
 
 
 def test_health_endpoint_returns_200(flask_test_client):

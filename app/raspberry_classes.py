@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 logger = config.config_logger(logger)
 
 
-class Raspberry_1:
+class Raspberry1:
     def __init__(self):
         # Set RPi GPIO board mode
         GPIO.setmode(config.BOARD_MODE)

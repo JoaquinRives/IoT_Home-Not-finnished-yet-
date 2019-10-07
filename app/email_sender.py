@@ -4,48 +4,70 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart, MIMEBase
 import smtplib
 import logging
-from app.config.config import config_logger
+from app.config import config
+import os
 
 logger = logging.getLogger(__name__)  # TODO
-logger = config_logger(logger)
+logger = config.config_logger(logger)
 
-from_addr = 'email@gmail.com'
-password = 'password' 
-to_addr = 'email@gmail.com'
-smtp_server = 'Smtp.gmail.com'
 
-# Email multiple part object
-msg = MIMEMultipart()
-msg['From'] = from_addr
-msg['To'] = to_addr
-msg['Subject'] = Header('hello world from smtp server', 'utf-8').encode()
+class EmailSender:
 
-# to add an attachment is just add a MIMEBase object to read a picture locally.
-with open(r'D:\OneDrive\Desktop\Raspberry_WebApp\static\light_off_icon3.jpg', 'rb') as f:
-    mime = MIMEBase('light_off_icon3', 'jpg', filename='light_off_icon3.jpg')
-    mime.add_header('Content-Disposition', 'attachment', filename='light_off_icon3.jpg')
-    mime.add_header('X-Attachment-Id', '0')
-    mime.add_header('Content-ID', '<0>')
-    mime.set_payload(f.read())
-    encoders.encode_base64(mime)
-    # Add object to MIMEMultipart object
-    msg.attach(mime)
+    def __init__(self):
+        self.from_addr = config.FROM_ADDR
+        self.password = config.PASSWORD
+        self.to_addr = config.TO_ADDR
+        self.smtp_server = config.SMTP_SERVER 
 
-# # Add object to MIMEMultipart object
-msg_content = MIMEText(
+    def send_email(self, subject, message, attach_images=None):
 
-    '<html>'
-        '<body>'
-            '<h1>Hello</h1>'
-            '<p><img src="cid:0"></p>'
-        '</body>'
-    '</html>', 'html', 'utf-8')
+        # TODO:
+        # - Add msg templates to the config file
+        # - Rearrange the arguments of this function
+        # - Add date and time to de msg
+        # - Log everything
 
-msg.attach(msg_content)
+        # Email multiple part object
+        msg = MIMEMultipart()
+        msg['From'] = self.from_addr
+        msg['To'] = self.to_addr
+        msg['Subject'] = Header(subject, 'utf-8').encode()
 
-# Connect to the server and send email
-smtp = smtplib.SMTP('smtp.gmail.com:587')
-smtp.starttls()
-smtp.login(from_addr, password)
-smtp.sendmail(from_addr, [to_addr], msg.as_string())
-smtp.quit()
+        # to add an attachment is just add a MIMEBase object to read a picture locally.
+        images_html = None
+        if attach_images:
+            list_images = []
+            for img_id, image in enumerate(attach_images):    
+                with open(image, 'rb') as f:
+                    mime = MIMEBase(os.path.splitext(image)[0], os.path.splitext(image)[1], filename=os.path.basename(image))
+                    mime.add_header('Content-Disposition', 'attachment', filename=os.path.basename(image))
+                    mime.add_header('X-Attachment-Id', str(img_id))
+                    mime.add_header('Content-ID', '<' + str(img_id) + '>')
+                    mime.set_payload(f.read())
+                    encoders.encode_base64(mime)
+                    # Add object to MIMEMultipart object
+                    msg.attach(mime)
+                    list_images.append("<p><img src='cid:" + str(img_id) + "'></p>")
+            
+            images_html = " \n ".join(list_images)
+
+        # Add object to MIMEMultipart object
+        msg_content = MIMEText(
+
+            "<html>"
+                "<body>"
+                    "<h1>RPi Home:</h2>"
+                    "<h2>" + subject + "</h2>"
+                    "<h3>" + message + "</h3>"
+                    "<br>" + (images_html if images_html else "") + "<br>"
+                "</body>"
+            "</html>", "html", "utf-8")
+
+        msg.attach(msg_content)
+
+        # Connect to the server and send email
+        smtp = smtplib.SMTP(self.smtp_server)
+        smtp.starttls()
+        smtp.login(self.from_addr, self.password)
+        smtp.sendmail(self.from_addr, [self.to_addr], msg.as_string())
+        smtp.quit()

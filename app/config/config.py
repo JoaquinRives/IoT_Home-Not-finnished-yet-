@@ -16,7 +16,7 @@ DATA_DIR = APP_ROOT / 'data'
 LOG_FILE = APP_ROOT / 'log_file.log'
 
 
-# Flask app configuration
+# Flask app
 class Config:
     DEBUG = False
     TESTING = False
@@ -42,10 +42,11 @@ class TestingConfig(Config):
     TESTING = True
 
 
-# Logger configuration
+# Logger
 FORMAT = logging.Formatter(
     "%(asctime)s — %(name)s — %(levelname)s —"
     "%(funcName)s:%(lineno)d — %(message)s")
+
 
 def config_logger(logger):
     # Config level
@@ -71,7 +72,7 @@ def config_logger(logger):
     return logger
 
 
-# Raspberry_Pi configuration
+# Raspberry_Pi
 BOARD_MODE = GPIO.BCM
 
 RELAY_1 = 5  # Light
@@ -81,3 +82,12 @@ RELAY_4 = 19
 
 RELAYS_WITH_AUTO = [RELAY_2]
 RELAYS_WITH_TIMER = [RELAY_1, RELAY_2, RELAY_3, RELAY_4]
+
+
+# Email Notifications
+FROM_ADDR = 'joaquin.raspberry.pi.1@gmail.com'
+PASSWORD = 'password'  # TODO: replace with the real password
+TO_ADDR = 'joakin9408@gmail.com'
+SMTP_SERVER = 'Smtp.gmail.com:587'
+
+# TODO: add a dictionary with message templates??
