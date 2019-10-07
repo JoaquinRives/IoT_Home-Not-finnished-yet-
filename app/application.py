@@ -2,10 +2,10 @@ from flask import Flask
 from flask_basicauth import BasicAuth
 import logging
 
-from app.logger import set_logger
+from app.config.config import config_logger
 
 logger = logging.getLogger(__name__)
-logger = set_logger(logger)
+logger = config_logger(logger)
 
 
 def create_app(*, config_object):

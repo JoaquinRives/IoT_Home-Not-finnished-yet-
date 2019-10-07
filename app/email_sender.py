@@ -4,11 +4,10 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart, MIMEBase
 import smtplib
 import logging
-from app.logger import set_logger
+from app.config.config import config_logger
 
 logger = logging.getLogger(__name__)  # TODO
-logger = set_logger(logger)
-
+logger = config_logger(logger)
 
 from_addr = 'email@gmail.com'
 password = 'password' 
@@ -21,7 +20,6 @@ msg['From'] = from_addr
 msg['To'] = to_addr
 msg['Subject'] = Header('hello world from smtp server', 'utf-8').encode()
 
-
 # to add an attachment is just add a MIMEBase object to read a picture locally.
 with open(r'D:\OneDrive\Desktop\Raspberry_WebApp\static\light_off_icon3.jpg', 'rb') as f:
     mime = MIMEBase('light_off_icon3', 'jpg', filename='light_off_icon3.jpg')
@@ -32,7 +30,6 @@ with open(r'D:\OneDrive\Desktop\Raspberry_WebApp\static\light_off_icon3.jpg', 'r
     encoders.encode_base64(mime)
     # Add object to MIMEMultipart object
     msg.attach(mime)
-
 
 # # Add object to MIMEMultipart object
 msg_content = MIMEText(

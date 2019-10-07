@@ -4,10 +4,10 @@ from app.forms import Timer_form, Auto_form
 import time
 import atexit
 import logging
-from app.logger import set_logger
+from app.config.config import config_logger
 
 logger = logging.getLogger(__name__)
-logger = set_logger(logger)
+logger = config_logger(logger)
 
 app = Blueprint('app', __name__)
 
@@ -160,7 +160,6 @@ def auto(deviceName, unit):
             actuator = rp1.relay3
         if unit == '4':
             actuator = rp1.relay4
-
 
     # Check if the auto-mode is already running:
     if rp1.auto_threads[actuator]:

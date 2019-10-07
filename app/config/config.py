@@ -1,5 +1,6 @@
 import os
 import pathlib
+import logging
 
 # Path to config file
 PATH_CONFIG = pathlib.Path(__file__).resolve().parent
@@ -14,7 +15,7 @@ DATA_DIR = APP_ROOT / 'data'
 LOG_FILE = APP_ROOT / 'log_file.log'
 
 
-# Configuration of the flask app
+# Flask app configuration
 class Config:
     DEBUG = False
     TESTING = False
@@ -38,3 +39,32 @@ class DevelopmentConfig(Config):
 
 class TestingConfig(Config):
     TESTING = True
+
+
+# Logger configuration
+FORMAT = logging.Formatter(
+    "%(asctime)s — %(name)s — %(levelname)s —"
+    "%(funcName)s:%(lineno)d — %(message)s")
+
+def config_logger(logger):
+    # Config level
+    logging.basicConfig(
+        level=logging.DEBUG)  # To log everything, by default it only logs warning and above.
+
+    # Create handlers
+    c_handler = logging.StreamHandler()
+    f_handler = logging.FileHandler(LOG_FILE)
+    c_handler.setLevel(logging.DEBUG)
+    f_handler.setLevel(logging.INFO)
+
+    # Create formatters and add it to handlers
+    c_handler.setFormatter(FORMAT)
+    f_handler.setFormatter(FORMAT)
+
+    # Add handlers to the logger
+    logger.addHandler(c_handler)
+    logger.addHandler(f_handler)
+
+    logger.propagate = False
+
+    return logger

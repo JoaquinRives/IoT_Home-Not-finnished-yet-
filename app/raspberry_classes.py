@@ -4,10 +4,10 @@ import threading
 from app.auto_mode import auto_func
 from app.timer import timer_func
 import logging
-from app.logger import set_logger
+from app.config.config import config_logger
 
 logger = logging.getLogger(__name__)
-logger = set_logger(logger)
+logger = config_logger(logger)
 
 
 class Raspberry_1:
@@ -87,8 +87,6 @@ class Raspberry_1:
                 f'Repeat: {self.timer_settings[gpio][2]}')
         
 
-
-
     def start_auto(self, gpio):
         self.auto_threads[gpio] = threading.Thread(target=auto_func, args=((gpio,) + self.auto_settings[gpio]))
         self.auto_threads[gpio].start()
@@ -118,6 +116,7 @@ class Raspberry_1:
             
             flash("Auto-Mode deactivated!")
             logger.info("Auto-Mode deactivated!")
+
 
     def clean_up(self):
         """ Reset RPi GPIOs """

@@ -20,7 +20,6 @@ def timer_func(actuator, time_on, time_off, repeat):
     else:
         time_off = time_off + ':00'
 
-
     time_on = datetime.datetime.strptime(time_on, "%H:%M:%S")
     time_off = datetime.datetime.strptime(time_off, "%H:%M:%S")
 
@@ -54,7 +53,6 @@ def timer_func(actuator, time_on, time_off, repeat):
                 GPIO.output(actuator, GPIO.LOW)
             elif current_str == time_off_str:
                 GPIO.output(actuator, GPIO.HIGH)
-
 
         # Stop timer at the end of the day if repeat==off
         if repeat == 'off':
