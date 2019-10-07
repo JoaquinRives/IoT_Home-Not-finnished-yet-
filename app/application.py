@@ -1,4 +1,3 @@
-
 from flask import Flask
 from flask_basicauth import BasicAuth
 import logging

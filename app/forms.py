@@ -10,8 +10,3 @@ class Timer_form(FlaskForm):
 class Auto_form(FlaskForm):
     temperature = IntegerField("temperature", validators=[validators.required()])
     temp_range = IntegerField("temp_range", validators=[validators.required()])
-    
-
-
-    
-    

@@ -1,6 +1,5 @@
 import base64
-import RPi.GPIO as GPIO
-from app.raspberry import Raspberry_1
+from app.raspberry_classes import Raspberry_1
 
 rp1 = Raspberry_1()
 

@@ -1,10 +1,6 @@
-from flask import Flask, flash ,request 
-from flask_basicauth import BasicAuth
-from app.raspberry import Raspberry_1
-from flask import render_template, redirect, url_for
-import RPi.GPIO as GPIO
+from flask import request, render_template, redirect, Blueprint, session
+from app.raspberry_classes import Raspberry_1
 from app.forms import Timer_form, Auto_form
-from flask import Flask, Blueprint, session
 import time
 import atexit
 import logging
