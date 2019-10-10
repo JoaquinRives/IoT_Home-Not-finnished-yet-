@@ -1,7 +1,6 @@
 from flask import Flask
 from flask_basicauth import BasicAuth
 import logging
-
 from app.config.config import config_logger
 
 logger = logging.getLogger(__name__)

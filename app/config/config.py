@@ -24,13 +24,13 @@ class Config:
     SERVER_PORT = 5000
     BASIC_AUTH_FORCE = True
     BASIC_AUTH_USERNAME = 'joaquin'
-    BASIC_AUTH_PASSWORD = 'qwerty'
+    BASIC_AUTH_PASSWORD = 'qwerty' # Change password
 
 
 class ProductionConfig(Config):
     DEBUG = False
-    SERVER_ADDRESS: os.environ.get('SERVER_ADDRESS', '0.0.0.0')
-    SERVER_PORT: os.environ.get('SERVER_PORT', '5000')
+    SERVER_ADDRESS: os.environ.get('SERVER_ADDRESS', '192.168.1.37')
+    SERVER_PORT: os.environ.get('SERVER_PORT', '80')
 
 
 class DevelopmentConfig(Config):

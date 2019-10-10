@@ -24,7 +24,21 @@ The commands to the RPi will be sent using a simple webpage by creating a local 
 
 => Pictures  #TODO
 
-Additional resources:
+
+=> Accessing the server from outside the local network:
+
+  To be able to access the server from outsite your local network with your own Custom Domain Name you need to:
+    1- Give the raspberry a static IP adress (and add it to the flask app)
+    2- Set up port forwarding
+    3- Set up the DDNS (dynamic domain name setup)
+
+    Tutorials:
+    - https://www.youtube.com/watch?v=jfSLxs40sIw
+    - https://maker.pro/raspberry-pi/projects/raspberry-pi-web-server
+    - https://raspberrypi.stackexchange.com/questions/37920/how-do-i-set-up-networking-wifi-static-ip-address
+
+
+Additional:
   - Tutorial to connect the Relay:
   https://www.youtube.com/watch?v=My1BDB1ei0E&t=273s
   -	Raspberry Pi 3 B+: 

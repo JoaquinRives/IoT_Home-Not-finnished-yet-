@@ -120,5 +120,6 @@ class Raspberry1:
 
     def clean_up(self):
         """ Reset RPi GPIOs """
+        logger.info(f'=> Cleaning up GPIOs before exiting...')
         GPIO.cleanup()
 

@@ -197,6 +197,7 @@ def set_auto():
 
     return redirect(f"/{deviceName}/{unit}/auto")
 
+
 # Reset the GPIOs before exit the App
 atexit.register(rp1.clean_up)
 
