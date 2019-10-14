@@ -6,6 +6,7 @@ from app.timer import timer_func
 import logging
 from app.config import config
 from app.live_video_feed import detect_motion
+from imutils.video import VideoStream
 
 logger = logging.getLogger(__name__)
 logger = config.config_logger(logger)
@@ -37,6 +38,11 @@ class Raspberry1:
         self.relays_with_auto = config.RELAYS_WITH_AUTO
         self.auto_threads = [None for i in range(28)]  # Automatic-mode (Heater): One thread for each GPIO of the raspberry
         self.auto_settings = [(None, None) for i in range(28)]
+
+        # Webcam
+        self.webcam_Sts = 'Off'
+        self.webcam_thread = None
+        self.vs = None
 
 
     def set_relays(self):
@@ -99,7 +105,7 @@ class Raspberry1:
 
     def stop_timer(self, gpio):
         if self.timer_threads[gpio]:
-            self.timer_threads[gpio].do_run = False  # Stop thread if already running
+            self.timer_threads[gpio].do_run = False
             self.timer_threads[gpio].join()
             self.timer_threads[gpio] = None
             self.set_status(gpio, 'normal')
@@ -110,7 +116,7 @@ class Raspberry1:
 
     def stop_auto(self, gpio):
         if self.auto_threads[gpio]:
-            self.auto_threads[gpio].do_run = False  # Stop thread if already running
+            self.auto_threads[gpio].do_run = False
             self.auto_threads[gpio].join()
             self.auto_threads[gpio] = None
             self.set_status(gpio, 'normal')
@@ -120,14 +126,23 @@ class Raspberry1:
 
 
     def start_webcam(self):
-        t = threading.Thread(target=detect_motion, args=(36,))
-        t.daemon = True
-        t.start()
+        self.vs = VideoStream(src=0).start()
+        self.webcam_Sts = 'On'
+        
+        self.webcam_thread = threading.Thread(target=detect_motion, args=(36, self.vs))
+        self.webcam_thread.daemon = True
+        self.webcam_thread.start()
 
 
     def stop_webcam(self):            # TODO
-        global vs, outputFrame, lock   
-        vs.stop()
+        self.webcam_Sts = 'Off'
+        global outputFrame, lock   # TODO Borrar
+        self.vs.stop()
+        self.vs = None
+
+        self.webcam_thread.do_run = False
+        self.webcam_thread.join()
+        self.webcam_thread = None
 
 
     def clean_up(self):

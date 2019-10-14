@@ -132,8 +132,12 @@
 			</tr>
 		</table>
 		<br>
-
+		{% if  webcam_Sts   == 'On' %}
 		<img src="{{ url_for('app.video_feed') }}">
+		{% endif %}
+		<a href="/webcam/On"class="button">Open Webcam</a>
+		<a href="/webcam/Off"class="button">Close Webcam</a>
+
 		
    </body>
 </html>

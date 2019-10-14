@@ -22,7 +22,7 @@ app = Blueprint('app', __name__)
 # Create a instance of the Raspberry
 rp1 = Raspberry1()
 
-rp1.start_webcam()   # TODO ################################################
+# rp1.start_webcam()   # TODO
 
 
 @app.route('/health', methods=['GET'])
@@ -42,8 +42,9 @@ def index():
         'relay2_Sts': rp1.get_status(rp1.relay2),
         'relay3_Sts': rp1.get_status(rp1.relay3),
         'relay4_Sts': rp1.get_status(rp1.relay4),
+        'webcam_Sts': rp1.webcam_Sts,
     }
-    return render_template('index.html', **template_data) # reload=time.time()
+    return render_template('index.html', **template_data)
 
 
 @app.route("/video_feed")
@@ -52,6 +53,17 @@ def video_feed():
     # type (mime type)
     return Response(generate_video_feed(),
                     mimetype="multipart/x-mixed-replace; boundary=frame")
+
+
+@app.route("/webcam/<action>")
+def webcam(action):
+    if action == 'On':
+        rp1.start_webcam()
+
+    elif action == 'Off':
+        rp1.stop_webcam()
+
+    return redirect("/index")
 
 
 @app.route("/<deviceName>/<unit>/<action>")
