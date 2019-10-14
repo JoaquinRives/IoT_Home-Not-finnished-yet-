@@ -27,7 +27,7 @@ The commands to the RPi will be sent using a simple webpage by creating a local 
 
 => Accessing the server from outside the local network:
 
-  This set up is needed to be able to access the server from outsite the local network with your own Custom Domain Name:
+  This set up is needed to be able to access the server from outsite the local network with a Custom Domain Name:
     1- Give the raspberry a static IP adress (and add it to the flask app)
     2- Set up port forwarding
     3- Set up the DDNS (dynamic domain name setup)

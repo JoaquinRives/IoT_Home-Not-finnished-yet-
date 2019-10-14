@@ -24,7 +24,7 @@ class Config:
     SERVER_PORT = 5000
     BASIC_AUTH_FORCE = True
     BASIC_AUTH_USERNAME = 'joaquin'
-    BASIC_AUTH_PASSWORD = 'qwerty' # Change password
+    BASIC_AUTH_PASSWORD = 'qwerty'  # Change password
 
 
 class ProductionConfig(Config):

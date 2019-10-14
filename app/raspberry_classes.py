@@ -5,22 +5,7 @@ from app.auto_mode import auto_func
 from app.timer import timer_func
 import logging
 from app.config import config
-
-
-#######################################
-from imutils.video import VideoStream
-from app.pyimagesearch.motion_detection import SingleMotionDetector
-import threading
-import argparse
-import datetime
-import imutils
-import time
-import cv2
-
-from app.live_video_feed import detect_motion, generate
-####################################
-
-
+from app.live_video_feed import detect_motion
 
 logger = logging.getLogger(__name__)
 logger = config.config_logger(logger)
