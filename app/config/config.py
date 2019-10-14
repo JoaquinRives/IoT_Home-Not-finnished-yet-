@@ -36,6 +36,8 @@ class ProductionConfig(Config):
 class DevelopmentConfig(Config):
     DEVELOPMENT = True
     DEBUG = True
+    THREADED=True
+    USE_RELOADER=False
 
 
 class TestingConfig(Config):

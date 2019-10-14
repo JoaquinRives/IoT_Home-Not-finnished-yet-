@@ -7,7 +7,7 @@ The commands to the RPi will be sent using a simple webpage by creating a local 
 => Features:
   -	Temperature, humidity and atmospheric pressure monitoring.
   -	Switch control of any electrical device or lights
-  -	Alarm system with video recording, motion detection and automatic notification by email
+  -	Alarm system with video recording, motion detection (OpenCV) and automatic notification by email
   -	House heating control
 
 => Devices used for the project:
@@ -27,7 +27,7 @@ The commands to the RPi will be sent using a simple webpage by creating a local 
 
 => Accessing the server from outside the local network:
 
-  To be able to access the server from outsite your local network with your own Custom Domain Name you need to:
+  This set up is needed to be able to access the server from outsite the local network with your own Custom Domain Name:
     1- Give the raspberry a static IP adress (and add it to the flask app)
     2- Set up port forwarding
     3- Set up the DDNS (dynamic domain name setup)
