@@ -44,6 +44,18 @@ class TestingConfig(Config):
     TESTING = True
 
 
+# Raspberry_Pi
+BOARD_MODE = GPIO.BCM
+
+RELAY_1 = 5  # Light
+RELAY_2 = 6  # Heater
+RELAY_3 = 13
+RELAY_4 = 19
+
+RELAYS_WITH_AUTO = [RELAY_2]
+RELAYS_WITH_TIMER = [RELAY_1, RELAY_2, RELAY_3, RELAY_4]
+
+
 # Logger
 FORMAT = logging.Formatter(
     "%(asctime)s — %(name)s — %(levelname)s —"
@@ -74,16 +86,18 @@ def config_logger(logger):
     return logger
 
 
-# Raspberry_Pi
-BOARD_MODE = GPIO.BCM
-
-RELAY_1 = 5  # Light
-RELAY_2 = 6  # Heater
-RELAY_3 = 13
-RELAY_4 = 19
-
-RELAYS_WITH_AUTO = [RELAY_2]
-RELAYS_WITH_TIMER = [RELAY_1, RELAY_2, RELAY_3, RELAY_4]
+# Security alarm
+security_alarm_config = {
+    	"use_dropbox": False,
+	    "dropbox_base_path": "YOUR_DROPBOX_PATH",
+	    "min_upload_seconds": 3.0,
+	    "min_motion_frames": 8,
+	    "camera_warmup_time": 2,
+	    "delta_thresh": 5,
+	    "resolution": [640, 480],
+	    "fps": 16,
+	    "min_area": 5000
+} 
 
 
 # Email Notifications

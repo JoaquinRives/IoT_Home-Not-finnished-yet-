@@ -5,8 +5,9 @@ from app.auto_mode import auto_func
 from app.timer import timer_func
 import logging
 from app.config import config
-from app.live_video_feed import detect_motion
+from app.live_video_feed import detect_motion, pi_surveillance
 from imutils.video import VideoStream
+from picamera import PiCamera
 
 logger = logging.getLogger(__name__)
 logger = config.config_logger(logger)
@@ -43,6 +44,10 @@ class Raspberry1:
         self.webcam_Sts = 'Off'
         self.webcam_thread = None
         self.vs = None
+
+        # Surveillance camera
+        self.pi_camera = None
+        self.pi_camera_Sts = 'Off'
 
 
     def set_relays(self):
@@ -129,20 +134,46 @@ class Raspberry1:
         self.vs = VideoStream(src=0).start()
         self.webcam_Sts = 'On'
         
-        self.webcam_thread = threading.Thread(target=detect_motion, args=(36, self.vs))
+        self.webcam_thread = threading.Thread(target=detect_motion, args=(36, self.vs,))
         self.webcam_thread.daemon = True
         self.webcam_thread.start()
+        
+        logger.info("Webcam activated!")
 
 
-    def stop_webcam(self):            # TODO
-        self.webcam_Sts = 'Off'
-        global outputFrame, lock   # TODO Borrar
+    def stop_webcam(self):
         self.vs.stop()
         self.vs = None
+        self.webcam_Sts = 'Off'
 
         self.webcam_thread.do_run = False
         self.webcam_thread.join()
         self.webcam_thread = None
+        
+        logger.info("Webcam deactivated!")
+
+
+    def start_surveillance(self):
+        self.pi_camera = PiCamera()
+        self.pi_camera_Sts = 'On'
+
+        self.surveillance_thread = threading.Thread(target=pi_surveillance, args=(self.pi_camera,))
+        #self.urveillancem_thread.daemon = True
+        self.surveillance_thread.start()
+        
+        logger.info("Security Alarm activated!")
+
+
+    def stop_surveillance(self):
+        self.pi_camera.stop_preview() # TODO borrar
+        self.pi_camera.close()
+        self.pi_camera_Sts = 'Off'
+
+        self.surveillance_thread.do_run = False
+        self.surveillance_thread.join()
+        self.surveillance_thread = None
+
+        logger.info("Security Alarm deactivated!")
 
 
     def clean_up(self):

@@ -9,11 +9,6 @@ from flask import render_template
 import threading
 from app.live_video_feed import generate_video_feed
 
-outputFrame = None
-lock = threading.Lock()
-vs = None
-
-
 logger = logging.getLogger(__name__)
 logger = config_logger(logger)
 
@@ -22,7 +17,8 @@ app = Blueprint('app', __name__)
 # Create a instance of the Raspberry
 rp1 = Raspberry1()
 
-# rp1.start_webcam()   # TODO
+outputFrame = None
+lock = threading.Lock()
 
 
 @app.route('/health', methods=['GET'])
@@ -62,6 +58,17 @@ def webcam(action):
 
     elif action == 'Off':
         rp1.stop_webcam()
+
+    return redirect("/index")
+
+
+@app.route("/securityAlarm/<action>")
+def surveillance(action):
+    if action == 'On':
+        rp1.start_surveillance()
+
+    elif action == 'Off':
+        rp1.stop_surveillance()
 
     return redirect("/index")
 
