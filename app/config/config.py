@@ -15,6 +15,12 @@ DATA_DIR = APP_ROOT / 'sensors_data'
 # Logging file
 LOG_FILE = APP_ROOT / 'log_file.log'
 
+# Sensor errors logging file
+SENSOR_ERROR_LOG_FILE = DATA_DIR / 'sensor_error.log'
+
+# Sensors data file
+SENSOR_DATA_FILE = DATA_DIR / 'sensor_data.txt'
+
 
 # Flask app
 class Config:
@@ -56,33 +62,66 @@ RELAYS_WITH_AUTO = [RELAY_2]
 RELAYS_WITH_TIMER = [RELAY_1, RELAY_2, RELAY_3, RELAY_4]
 
 # Logger
-FORMAT = logging.Formatter(
+FORMAT_MAIN_LOGGER = logging.Formatter(
     "%(asctime)s — %(name)s — %(levelname)s —"
     "%(funcName)s:%(lineno)d — %(message)s")
 
+FORMAT_SENSOR_LOGGER = logging.Formatter(
+    "%(asctime)s — %(lineno)d — %(message)s")
 
-def config_logger(logger):
-    # Config level
-    logging.basicConfig(
-        level=logging.DEBUG)  # To log everything, by default it only logs warning and above.
 
-    # Create handlers
-    c_handler = logging.StreamHandler()
-    f_handler = logging.FileHandler(LOG_FILE)
-    c_handler.setLevel(logging.DEBUG)
-    f_handler.setLevel(logging.INFO)
+def config_logger(logger, type="main"):
+    if type == "main":
+        
+        # Config level
+        logging.basicConfig(
+            level=logging.DEBUG)  # To log everything, by default it only logs warning and above.
 
-    # Create formatters and add it to handlers
-    c_handler.setFormatter(FORMAT)
-    f_handler.setFormatter(FORMAT)
+        # Create handlers
+        c_handler = logging.StreamHandler()
+        f_handler = logging.FileHandler(LOG_FILE)
+        c_handler.setLevel(logging.DEBUG)
+        f_handler.setLevel(logging.INFO)
 
-    # Add handlers to the logger
-    logger.addHandler(c_handler)
-    logger.addHandler(f_handler)
+        # Create formatters and add it to handlers
+        c_handler.setFormatter(FORMAT_MAIN_LOGGER)
+        f_handler.setFormatter(FORMAT_MAIN_LOGGER)
 
-    logger.propagate = False
+        # Add handlers to the logger
+        logger.addHandler(c_handler)
+        logger.addHandler(f_handler)
 
-    return logger
+        logger.propagate = False
+
+        return logger
+    
+    elif type == "sensor":
+        
+        # Config level
+        logging.basicConfig(
+            level=logging.DEBUG)  # To log everything, by default it only logs warning and above.
+
+        # Create handlers
+        c_handler = logging.StreamHandler()
+        f_handler = logging.FileHandler(SENSOR_ERROR_LOG_FILE)
+        c_handler.setLevel(logging.DEBUG)
+        f_handler.setLevel(logging.INFO)
+
+        # Create formatters and add it to handlers
+        c_handler.setFormatter(FORMAT_SENSOR_LOGGER)
+        f_handler.setFormatter(FORMAT_SENSOR_LOGGER)
+
+        # Add handlers to the logger
+        logger.addHandler(c_handler)
+        logger.addHandler(f_handler)
+
+        logger.propagate = False
+
+        return logger
+
+    else:
+        raise Exception("Argument 'type=' is not valid")
+
 
 
 # Security Alarm

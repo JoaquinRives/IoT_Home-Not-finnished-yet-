@@ -3,11 +3,12 @@ from app.raspberry_classes import Raspberry1
 from app.forms import Timer_form, Auto_form
 import atexit
 import logging
-from app.config.config import config_logger
 from flask import Response
 from flask import render_template
 import threading
 from app.camera_management import generate_video_feed
+from app.sensor_data_handling import data_collection
+from app.config.config import config_logger
 
 logger = logging.getLogger(__name__)
 logger = config_logger(logger)
@@ -17,8 +18,21 @@ app = Blueprint('app', __name__)
 # Create a instance of the Raspberry
 rp1 = Raspberry1()
 
+# Start collecting data from the sensors
+data_collection_thread = threading.Thread(target=data_collection)
+data_collection_thread.start()
+
+# Initializing outputFrame and lock for the live webcam thread
 outputFrame = None
 lock = threading.Lock()
+
+# To execute before exiting
+def before_exit():
+    # Reset the GPIOs before exit the App
+    rp1.clean_up
+    logger.info("Exiting app")
+
+atexit.register(before_exit)
 
 
 @app.route('/health', methods=['GET'])
@@ -235,6 +249,3 @@ def set_auto():
 
     return redirect(f"/{deviceName}/{unit}/auto")
 
-
-# Reset the GPIOs before exit the App
-atexit.register(rp1.clean_up)

@@ -4,3 +4,5 @@
 *.log
 __pycache__/
 /app/surveillance_captures/*.jpg
+/app/sensor_data/*.log
+/app/sensor_data/sensor_data.txt
