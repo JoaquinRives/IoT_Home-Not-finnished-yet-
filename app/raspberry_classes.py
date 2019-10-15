@@ -4,7 +4,7 @@ import threading
 from app.auto_mode import auto_func
 from app.timer import timer_func
 from app.config import config
-from app.live_video_feed import detect_motion, pi_surveillance
+from app.camera_management import detect_motion, pi_surveillance
 from imutils.video import VideoStream
 from picamera import PiCamera
 import logging

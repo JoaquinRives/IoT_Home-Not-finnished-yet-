@@ -55,7 +55,6 @@ RELAY_4 = 19
 RELAYS_WITH_AUTO = [RELAY_2]
 RELAYS_WITH_TIMER = [RELAY_1, RELAY_2, RELAY_3, RELAY_4]
 
-
 # Logger
 FORMAT = logging.Formatter(
     "%(asctime)s — %(name)s — %(levelname)s —"
@@ -86,25 +85,25 @@ def config_logger(logger):
     return logger
 
 
-# Security alarm
+# Security Alarm
 SURVEILLANCE_CAPTURES_DIR = APP_ROOT / 'surveillance_captures'
 
-security_alarm_config = {
-    	"use_dropbox": False,
-        "email_alert": True,
-        "captures_folder": SURVEILLANCE_CAPTURES_DIR,
-        "dropbox_access_token": "YOUR_DROPBOX_ACCESS_TOKEN",
-	    "dropbox_base_path": "PATH_TO_DROPBOX_FOLDER",
-	    "min_upload_seconds": 3.0,
-        "min_email_seconds": 30.0,
-	    "min_motion_frames": 8,
-	    "camera_warmup_time": 2,
-	    "delta_thresh": 5,
-	    "resolution": [640, 480],
-	    "fps": 16,
-	    "min_area": 5000
-} 
-
+surveillance_config = {
+    "use_dropbox": False,
+    "email_alert": True,
+    "captures_folder": SURVEILLANCE_CAPTURES_DIR,
+    "dropbox_access_token": "YOUR_DROPBOX_ACCESS_TOKEN",
+    "dropbox_base_path": "PATH_TO_DROPBOX_FOLDER",
+    "min_upload_seconds": 3.0,
+    "min_email_seconds": 30.0,
+    "max_images_email": 5,
+    "min_motion_frames": 8,
+    "camera_warmup_time": 2,
+    "delta_thresh": 5,
+    "resolution": [640, 480],
+    "fps": 16,
+    "min_area": 5000
+}
 
 # Email Notifications
 FROM_ADDR = 'joaquin.raspberry.pi.1@gmail.com'

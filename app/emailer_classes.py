@@ -39,8 +39,10 @@ class EmailSender:
             list_images = []
             for img_id, image in enumerate(attach_images):    
                 with open(image, 'rb') as f:
-                    mime = MIMEBase(os.path.splitext(image)[0], os.path.splitext(image)[1], filename=os.path.basename(image))
-                    mime.add_header('Content-Disposition', 'attachment', filename=os.path.basename(image))
+                    mime = MIMEBase(os.path.splitext(image)[0], os.path.splitext(image)[1],
+                                    filename=os.path.basename(image))
+                    mime.add_header('Content-Disposition', 'attachment',
+                                    filename=os.path.basename(image))
                     mime.add_header('X-Attachment-Id', str(img_id))
                     mime.add_header('Content-ID', '<' + str(img_id) + '>')
                     mime.set_payload(f.read())

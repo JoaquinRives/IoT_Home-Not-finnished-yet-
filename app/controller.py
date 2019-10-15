@@ -7,7 +7,7 @@ from app.config.config import config_logger
 from flask import Response
 from flask import render_template
 import threading
-from app.live_video_feed import generate_video_feed
+from app.camera_management import generate_video_feed
 
 logger = logging.getLogger(__name__)
 logger = config_logger(logger)
