@@ -7,18 +7,22 @@ The commands to the RPi will be sent using a simple webpage by creating a local 
 => Features:
   -	Temperature, humidity and atmospheric pressure monitoring.
   -	Switch control of any electrical device or lights
-  -	Alarm system with video recording, motion detection (OpenCV) and automatic notification by email
   -	House heating control
+  -	Security Alarm system:
+      o	Video recording
+      o	Motion detection (OpenCV)
+      o	Automatic notification by email
+      o	Automatic uploading of captures to dropbox
 
 => Devices used for the project:
   -	Raspberry Pi 3 B with Raspbian OS
   -	4 Channel Relay (5V Active Low - Output AC 250V)
   -	Raspberry camera module 5MP 
   -	Sensor Hub:
-    o	Temperature and Humidity
-    o	Atmospheric Pressure
-    o	Light Intensity Detection
-    o	Motion Detection
+      o	Temperature and Humidity
+      o	Atmospheric Pressure
+      o	Light Intensity Detection
+      o	Motion Detection
 
 => Testing the App (Video)  #TODO
 

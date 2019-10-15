@@ -5,11 +5,15 @@ from picamera import PiCamera
 from app.config.config import security_alarm_config as config
 import warnings
 import threading
-#import dropbox
+import dropbox
 import datetime
 import imutils
 import time
 import cv2
+import logging
+
+logger = logging.getLogger(__name__)
+logger = config.config_logger(logger)
 
 outputFrame = None
 lock = threading.Lock()
@@ -90,11 +94,11 @@ def generate_video_feed():
 
 def pi_surveillance(pi_camera):
 	warnings.filterwarnings("ignore")
-	
-	# if conf["use_dropbox"]:
-	# # connect to dropbox and start the session authorization process
-	# client = dropbox.Dropbox(conf["dropbox_access_token"])
-	# print("[SUCCESS] dropbox account linked")
+
+	if config["use_dropbox"]:
+		# connect to dropbox and start the session authorization process
+		client = dropbox.Dropbox(config["dropbox_access_token"])
+		logger.info("dropbox account linked")
 
 	# initialize the camera and grab a reference to the raw camera capture
 	camera = pi_camera
@@ -104,7 +108,7 @@ def pi_surveillance(pi_camera):
 
 	# allow the camera to warmup, then initialize the average frame, last
 	# uploaded timestamp, and frame motion counter
-	print("[INFO] warming up...")  				# TODO log this
+	logger.info("warming up camera...")
 	time.sleep(config["camera_warmup_time"])
 	avg = None
 	lastUploaded = datetime.datetime.now()
@@ -128,7 +132,6 @@ def pi_surveillance(pi_camera):
 
 			# if the average frame is None, initialize it
 			if avg is None:
-				print("[INFO] starting background model...")  # TODO log this instead of print it
 				avg = gray.copy().astype("float")
 				rawCapture.truncate(0)
 				continue
@@ -177,7 +180,7 @@ def pi_surveillance(pi_camera):
 					# check to see if the number of frames with consistent motion is
 					# high enough
 					if motionCounter >= config["min_motion_frames"]:
-						print('movement detected!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+						logger.info('Security Alarm: Movement detected!')
 						# check to see if dropbox sohuld be used
 						if config["use_dropbox"]:
 							# write the image to temporary file
@@ -185,9 +188,9 @@ def pi_surveillance(pi_camera):
 							cv2.imwrite(t.path, frame)
 
 							# upload the image to Dropbox and cleanup the tempory image
-							print("[UPLOAD] {}".format(ts))  							# TODO Log this ############
+							logger.info("Dropbox upload: {}".format(ts))
 							path = "/{base_path}/{timestamp}.jpg".format(
-								base_path=conf["dropbox_base_path"], timestamp=ts)
+								base_path=config["dropbox_base_path"], timestamp=ts)
 							client.files_upload(open(t.path, "rb").read(), path)
 							t.cleanup()
 
@@ -199,16 +202,6 @@ def pi_surveillance(pi_camera):
 			# otherwise, the room is not occupied
 			else:
 				motionCounter = 0
-
-			# # check to see if the frames should be displayed to screen
-			# if conf["show_video"]:										# TODO borrar
-			# 	# display the security feed
-			# 	cv2.imshow("Security Feed", frame)
-			# 	key = cv2.waitKey(1) & 0xFF
-
-			# 	# if the `q` key is pressed, break from the lop
-			# 	if key == ord("q"):
-			# 		break
 
 			# clear the stream in preparation for the next frame
 			rawCapture.truncate(0)

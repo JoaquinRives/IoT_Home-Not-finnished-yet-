@@ -89,7 +89,9 @@ def config_logger(logger):
 # Security alarm
 security_alarm_config = {
     	"use_dropbox": False,
-	    "dropbox_base_path": "YOUR_DROPBOX_PATH",
+        "email_alert": True,
+        "dropbox_access_token": "YOUR_DROPBOX_ACCESS_TOKEN",
+	    "dropbox_base_path": "PATH_TO_DROPBOX_FOLDER",
 	    "min_upload_seconds": 3.0,
 	    "min_motion_frames": 8,
 	    "camera_warmup_time": 2,

@@ -3,11 +3,11 @@ import RPi.GPIO as GPIO
 import threading
 from app.auto_mode import auto_func
 from app.timer import timer_func
-import logging
 from app.config import config
 from app.live_video_feed import detect_motion, pi_surveillance
 from imutils.video import VideoStream
 from picamera import PiCamera
+import logging
 
 logger = logging.getLogger(__name__)
 logger = config.config_logger(logger)
@@ -161,6 +161,7 @@ class Raspberry1:
         #self.urveillancem_thread.daemon = True
         self.surveillance_thread.start()
         
+        flash("Security Alarm activated!")
         logger.info("Security Alarm activated!")
 
 
@@ -173,6 +174,7 @@ class Raspberry1:
         self.surveillance_thread.join()
         self.surveillance_thread = None
 
+        flash("Security Alarm deactivated!")
         logger.info("Security Alarm deactivated!")
 
 
