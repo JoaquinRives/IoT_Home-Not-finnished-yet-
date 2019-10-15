@@ -3,3 +3,4 @@
 .idea/workspace.xml
 *.log
 __pycache__/
+/app/surveillance_captures/*

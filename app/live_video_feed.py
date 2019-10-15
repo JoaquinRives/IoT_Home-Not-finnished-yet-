@@ -1,7 +1,8 @@
 from app.pyimagesearch.motion_detection import SingleMotionDetector
 from app.pyimagesearch.tempimage import TempImage
 from picamera.array import PiRGBArray
-from app.config.config import security_alarm_config as config
+from app.config import config
+from app.emailer_classes import EmailSender
 import warnings
 import threading
 import dropbox
@@ -16,6 +17,8 @@ logger = config.config_logger(logger)
 
 outputFrame = None
 lock = threading.Lock()
+
+email_sender = EmailSender()
 
 
 def detect_motion(frameCount, video_stream):
@@ -94,23 +97,27 @@ def generate_video_feed():
 def pi_surveillance(pi_camera):
     warnings.filterwarnings("ignore")
 
-    if config["use_dropbox"]:
+    if config.security_alarm_config["use_dropbox"]:
         # connect to dropbox and start the session authorization process
-        client = dropbox.Dropbox(config["dropbox_access_token"])
+        client = dropbox.Dropbox(config.security_alarm_config["dropbox_access_token"])
         logger.info("dropbox account linked")
 
     # initialize the camera and grab a reference to the raw camera capture
     camera = pi_camera
-    camera.resolution = tuple(config["resolution"])
-    camera.framerate = config["fps"]
-    rawCapture = PiRGBArray(camera, size=tuple(config["resolution"]))
+    camera.resolution = tuple(config.security_alarm_config["resolution"])
+    camera.framerate = config.security_alarm_config["fps"]
+    rawCapture = PiRGBArray(camera, size=tuple(config.security_alarm_config["resolution"]))
 
     # allow the camera to warmup, then initialize the average frame, last
     # uploaded timestamp, and frame motion counter
     logger.info("warming up camera...")
-    time.sleep(config["camera_warmup_time"])
+    time.sleep(config.security_alarm_config["camera_warmup_time"])
     avg = None
     lastUploaded = datetime.datetime.now()
+    lastEmailed = datetime.datetime.now()
+
+    recent_captures = tuple()
+
     motionCounter = 0
 
     t = threading.currentThread()
@@ -143,7 +150,7 @@ def pi_surveillance(pi_camera):
 
             # threshold the delta image, dilate the thresholded image to fill
             # in holes, then find contours on thresholded image
-            thresh = cv2.threshold(frameDelta, config["delta_thresh"], 255,
+            thresh = cv2.threshold(frameDelta, config.security_alarm_config["delta_thresh"], 255,
                                    cv2.THRESH_BINARY)[1]
             thresh = cv2.dilate(thresh, None, iterations=2)
             cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL,
@@ -153,7 +160,7 @@ def pi_surveillance(pi_camera):
             # loop over the contours
             for c in cnts:
                 # if the contour is too small, ignore it
-                if cv2.contourArea(c) < config["min_area"]:
+                if cv2.contourArea(c) < config.security_alarm_config["min_area"]:
                     continue
 
                 # compute the bounding box for the contour, draw it on the frame,
@@ -172,29 +179,56 @@ def pi_surveillance(pi_camera):
             # check to see if the room is occupied
             if text == "Occupied":
                 # check to see if enough time has passed between uploads
-                if (timestamp - lastUploaded).seconds >= config["min_upload_seconds"]:
+                if (timestamp - lastUploaded).seconds >= config.security_alarm_config["min_upload_seconds"]:
                     # increment the motion counter
                     motionCounter += 1
 
                     # check to see if the number of frames with consistent motion is
                     # high enough
-                    if motionCounter >= config["min_motion_frames"]:
+                    if motionCounter >= config.security_alarm_config["min_motion_frames"]:
                         logger.info('Security Alarm: Movement detected!')
+
+                        # Save capture in the surveillance_captures directory
+                        cv2.imwrite(f"{config.security_alarm_config['captures_folder']}/{ts}.jpg", frame)
+                        logger.info(f"Capture saved: {config.security_alarm_config['captures_folder']}/{ts}.jpg")
+                        
+                        # Add capture to recent captures
+                        recent_captures= (f"{config.security_alarm_config['captures_folder']}/{ts}.jpg",) + recent_captures
+                        
                         # check to see if dropbox sohuld be used
-                        if config["use_dropbox"]:
+                        if config.security_alarm_config["use_dropbox"]:
                             # write the image to temporary file
                             t = TempImage()
                             cv2.imwrite(t.path, frame)
-
+ 
                             # upload the image to Dropbox and cleanup the tempory image
                             logger.info("Dropbox upload: {}".format(ts))
                             path = "/{base_path}/{timestamp}.jpg".format(
-                                base_path=config["dropbox_base_path"], timestamp=ts)
+                                base_path=config.security_alarm_config["dropbox_base_path"], timestamp=ts)
                             client.files_upload(open(t.path, "rb").read(), path)
                             t.cleanup()
 
-                        # update the last uploaded timestamp and reset the motion
-                        # counter
+                        if config.security_alarm_config["email_alert"]:
+                            if (timestamp - lastEmailed).seconds >= config.security_alarm_config["min_email_seconds"]:
+                                logger.info(f"Email sent: {str(recent_captures[:5])}")  # TODO
+
+                                # TODO: insert my link to dropbox
+                                # Send email notification with the most recent captures (5 captures max)
+                                # TODO: Uncomment this
+                                email_sender.send_email(
+                                    subject="Security Alarm",
+                                    message="The Surveillance Camera detected movement in your room.. \n
+                                            "Dropbox Security Alarm: 'insert link to your dropbox here",
+                                    attach_images=recent_captures[:5]
+                                )
+
+                                # update the last_emailed timestamp and recent_captures
+                                lastEmailed = timestamp
+                                recent_captures = tuple()
+
+                        # TODO: add a scrollable text box to index.html with to log the alarm events
+
+                        # update the last uploaded timestamp and reset the motion counter
                         lastUploaded = timestamp
                         motionCounter = 0
 

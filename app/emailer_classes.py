@@ -33,7 +33,7 @@ class EmailSender:
         msg['To'] = self.to_addr
         msg['Subject'] = Header(subject, 'utf-8').encode()
 
-        # to add an attachment is just add a MIMEBase object to read a picture locally.
+        # Attach images and insert them in the html code.
         images_html = None
         if attach_images:
             list_images = []

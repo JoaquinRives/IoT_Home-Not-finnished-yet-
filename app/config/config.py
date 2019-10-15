@@ -10,7 +10,7 @@ PATH_CONFIG = pathlib.Path(__file__).resolve().parent
 APP_ROOT = pathlib.Path(PATH_CONFIG).resolve().parent
 
 # Path to data
-DATA_DIR = APP_ROOT / 'data'
+DATA_DIR = APP_ROOT / 'sensors_data'
 
 # Logging file
 LOG_FILE = APP_ROOT / 'log_file.log'
@@ -87,12 +87,16 @@ def config_logger(logger):
 
 
 # Security alarm
+SURVEILLANCE_CAPTURES_DIR = APP_ROOT / 'surveillance_captures'
+
 security_alarm_config = {
     	"use_dropbox": False,
         "email_alert": True,
+        "captures_folder": SURVEILLANCE_CAPTURES_DIR,
         "dropbox_access_token": "YOUR_DROPBOX_ACCESS_TOKEN",
 	    "dropbox_base_path": "PATH_TO_DROPBOX_FOLDER",
 	    "min_upload_seconds": 3.0,
+        "min_email_seconds": 30.0,
 	    "min_motion_frames": 8,
 	    "camera_warmup_time": 2,
 	    "delta_thresh": 5,
