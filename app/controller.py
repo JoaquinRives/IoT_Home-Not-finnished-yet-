@@ -294,11 +294,3 @@ def set_auto():
                     rp1.stop_timer(actuator)
 
     return redirect(f"/{deviceName}/{unit}/auto")
-
-
-@app.route('/shutdown', methods=['GET'])
-def safe_exit():
-    logger.info('Shutting down server')
-    exit()
-    return None
-
