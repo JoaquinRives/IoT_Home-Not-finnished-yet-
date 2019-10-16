@@ -7,7 +7,8 @@ from flask import Response
 from flask import render_template
 import threading
 from app.camera_management import generate_video_feed
-from app.sensor_data_handling import data_collection
+from app.sensor_data_handling import data_collection, get_sensorhub_data
+import app.chart_creator as chart_creator
 from app.config.config import config_logger
 
 logger = logging.getLogger(__name__)
@@ -22,14 +23,18 @@ rp1 = Raspberry1()
 data_collection_thread = threading.Thread(target=data_collection)
 data_collection_thread.start()
 
+# TODO move this to a thread
+chart_creator.create_chart1()
+
+# TODO delete
 # Initializing outputFrame and lock for the live webcam thread
-outputFrame = None
-lock = threading.Lock()
+# outputFrame = None
+# lock = threading.Lock()
 
 # To execute before exiting
 def before_exit():
     # Reset the GPIOs before exit the App
-    rp1.clean_up
+    rp1.clean_up()
     logger.info("Exiting app")
 
 atexit.register(before_exit)
@@ -46,7 +51,7 @@ def health():
 @app.route('/index')
 def index():
     
-    # Read GPIOs Status
+    # Read Status and pass them to the index.html  # TODO: add get_sensorhub_data()
     template_data = {
         'relay1_Sts': rp1.get_status(rp1.relay1),
         'relay2_Sts': rp1.get_status(rp1.relay2),

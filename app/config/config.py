@@ -150,4 +150,7 @@ PASSWORD = 'password'  # TODO: replace with the real password
 TO_ADDR = 'joakin9408@gmail.com'
 SMTP_SERVER = 'Smtp.gmail.com:587'
 
-# TODO: add a dictionary with message templates??
+
+# Chart creator
+TIME_RANGE_CHART_1 = 24  # Time range to plot (24 hours)
+TIME_RANGE_CHART_2 = 30  # Time range to plot (30 days)

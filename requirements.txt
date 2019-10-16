@@ -15,3 +15,5 @@ wtforms
 datetime
 azure-iot-device  ????
 smbus
+plotly
+scipy
