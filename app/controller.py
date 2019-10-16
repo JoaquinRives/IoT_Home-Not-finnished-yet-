@@ -8,11 +8,11 @@ from flask import render_template
 import threading
 from app.camera_management import generate_video_feed
 from app.sensor_data_handling import data_collection, get_sensorhub_data
-import app.chart_creator as chart_creator
-from app.config.config import config_logger
+from app.chart_creator import create_chart
+import app.config.config as config
 
 logger = logging.getLogger(__name__)
-logger = config_logger(logger)
+logger = config.config_logger(logger)
 
 app = Blueprint('app', __name__)
 
@@ -23,8 +23,9 @@ rp1 = Raspberry1()
 data_collection_thread = threading.Thread(target=data_collection)
 data_collection_thread.start()
 
-# TODO move this to a thread
-chart_creator.create_chart1()
+# Create chart and keep it updated
+chart_thread = threading.Thread(target=create_chart, args=(config.CHART_SETTINGS_1,))
+chart_thread.start()
 
 # TODO delete
 # Initializing outputFrame and lock for the live webcam thread

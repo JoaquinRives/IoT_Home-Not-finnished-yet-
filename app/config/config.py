@@ -151,6 +151,22 @@ TO_ADDR = 'joakin9408@gmail.com'
 SMTP_SERVER = 'Smtp.gmail.com:587'
 
 
-# Chart creator
-TIME_RANGE_CHART_1 = 24  # Time range to plot (24 hours)
-TIME_RANGE_CHART_2 = 30  # Time range to plot (30 days)
+# Chart 1
+CHART_SETTINGS_1 = {
+    'chart_name': 'sensor_chart',
+    'features': ['off-chip temperature', 'onboard humidity'],
+    'time_range': None,
+    'y_axis': [0, 45],
+    'format': {
+        'off-chip temperature': {
+            'mode': 'lines',
+            'line': dict(dash='solid', color='red'),
+            'name': 'temp'
+        },
+        'onboard humidity': {
+            'mode': 'lines',
+            'line': dict(dash='dot', color='royalblue'),
+            'name': 'humidity'
+        }
+    }
+}

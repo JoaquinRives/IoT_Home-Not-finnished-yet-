@@ -1,13 +1,17 @@
 import pandas as pd
 from scipy import signal
 import plotly
+import logging
 import plotly.graph_objs as go
 import datetime as dt
-import plotly.io as pio
+import threading
 from app.config import config
+import time
+# import plotly.io as pio
+# pio.renderers.default = "browser"
 
-pio.renderers.default = "browser"
-
+logger = logging.getLogger(__name__)
+logger = config.config_logger(logger)
 
 def datetime_convert(x):
     """ Convert str to datetime format"""
@@ -15,58 +19,75 @@ def datetime_convert(x):
     return x
 
 
-def create_chart1():
-    # Columns of the data that we want to plot
-    features = []  # TODO
+def create_chart(chart_settings):
+    """ Creates html charts (like the one embeded in index.html) and keeps them updated """
 
-    # Time range to plot on hours
-    time_range = config.TIME_RANGE_CHART_1
+    chart_name = chart_settings['chart_name']
 
-    # Import sensor data
-    df = pd.read_csv(config.SENSOR_DATA_FILE, sep=";")
+    t = threading.currentThread()
 
-    # Give it the right format
-    df['time_stamp'] = df['time_stamp'].apply(datetime_convert)
+    next_update = dt.datetime.now()  # next_update: It indicates when to update the chart
 
-    df['minute'] = df['time_stamp'].apply(lambda x: x.minute)
-    df['hour'] = df['time_stamp'].apply(lambda x: x.hour)
-    df['day'] = df['time_stamp'].apply(lambda x: x.day)
-    df['month'] = df['time_stamp'].apply(lambda x: x.month)
-    df['year'] = df['time_stamp'].apply(lambda x: x.year)
+    while getattr(t, "do_run", True):  # To stop the thread with a Flag
+        
+        # Create a new chart every 20 min to keep it updated
+        if next_update <= dt.datetime.now():
+            # Import sensor data
+            df = pd.read_csv(config.SENSOR_DATA_FILE, sep=";")
 
-    #  Filter the data for the time range that we want to plot
-    time_range_start = dt.datetime.now() - dt.timedelta(hours=time_range)
-    df = df[df['time_stamp'] > time_range_start]
+            # Columns of the data that we want to use
+            features_to_plot = chart_settings["features"]
+            features_to_use = ['time_stamp'] + features_to_plot
 
-    # Create the plot
-    time = df['time_stamp']
-    humidity = df['onboard humidity']
-    temperature = df['off-chip temperature']
+            df = df[[col for col in df.columns if col in features_to_use]]
 
-    trace1 = go.Scatter(
-        x=time,
-        y=signal.savgol_filter(humidity,  # Smoothing
-                               11,  # window size used for filtering
-                               3),  # order of fitted polynomial
-        mode='lines',
-        line=dict(dash='dot', color='royalblue'),
-        name='humidity'
-    )
+            # Convert time_stamp string to datatime type
+            df['time_stamp'] = df['time_stamp'].apply(datetime_convert)
 
-    trace2 = go.Scatter(
-        x=time,
-        y=signal.savgol_filter(temperature,  # Smoothing
-                               11,  # window size used for filtering
-                               3),  # order of fitted polynomial
-        mode='lines',
-        line=dict(color='red'),
-        name='temp'
-    )
+            #  Filter the data for the time range that we want to plot
+            if chart_settings["time_range"]:
+                n_days = chart_settings["time_range"]  # Number of days to plot
+                startign_date = dt.datetime.now() - dt.timedelta(days=n_days)
+                df = df[df['time_stamp'] > startign_date]
 
-    data = [trace1, trace2]
+            # Create the plot
+            x_axis = df['time_stamp']
 
-    layout = go.Layout(yaxis=dict(range=[-10, 30]))
+            data = []
 
-    fig = go.Figure(data=data, layout=layout)
+            for feature in features_to_plot:
+                try:
+                    trace = go.Scatter(
+                        x=x_axis,
+                        y=signal.savgol_filter(df[feature],  # Smoothing
+                                            11,  # window size used for filtering
+                                            3),  # order of fitted polynomial
+                        mode=chart_settings["format"][feature]['mode'],
+                        line=chart_settings["format"][feature]['line'],
+                        name=chart_settings["format"][feature]['name'])
+                except:
+                    trace = go.Scatter(
+                        x=x_axis,
+                        y=signal.savgol_filter(df[feature],  # Smoothing
+                                            11,  # window size used for filtering
+                                            3),  # order of fitted polynomial
+                        mode='lines',
+                        line=dict(dash='solid', color='red'),
+                        name=feature)
 
-    plotly.offline.plot(fig, filename='app/static/chart1.html', auto_open=False)
+                data.append(trace)
+
+            layout = go.Layout(yaxis=dict(range=chart_settings["y_axis"]))
+            fig = go.Figure(data=data, layout=layout)
+            fig.update_layout(title_text='Sensor Data', xaxis_rangeslider_visible=True)
+            filename = str(config.APP_ROOT) + f"/static/{chart_name}.html"
+            plotly.offline.plot(fig, filename=filename, auto_open=False)
+
+            logger.info("Sensor chart updated")
+
+            # Set the next update in 20 min and go to sleep
+            next_update = dt.datetime.now() + dt.timedelta(minutes=20)
+            time.sleep(60)
+
+        else:
+            time.sleep(60)

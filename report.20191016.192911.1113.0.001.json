@@ -1,0 +1,242 @@
+
+{
+  "header": {
+    "event": "Allocation failed - JavaScript heap out of memory",
+    "trigger": "FatalError",
+    "filename": "report.20191016.192911.1113.0.001.json",
+    "dumpEventTime": "2019-10-16T19:29:11Z",
+    "dumpEventTimeStamp": "1571243351745",
+    "processId": 1113,
+    "cwd": "/home/pi/IoT_Home-Not_finnished_yet",
+    "commandLine": [
+      "/home/pi/.vscode-server-insiders/bin/3f6ed25939b8ef157a7a41e0dc43b517898d4005/node",
+      "/home/pi/.vscode-server-insiders/bin/3f6ed25939b8ef157a7a41e0dc43b517898d4005/extensions/html-language-features/server/dist/htmlServerMain",
+      "--node-ipc",
+      "--clientProcessId=1014"
+    ],
+    "nodejsVersion": "v12.4.0",
+    "glibcVersionRuntime": "2.28",
+    "glibcVersionCompiler": "2.24",
+    "wordSize": 32,
+    "arch": "arm",
+    "platform": "linux",
+    "componentVersions": {
+      "node": "12.4.0",
+      "v8": "7.4.288.27-node.18",
+      "uv": "1.29.1",
+      "zlib": "1.2.11",
+      "brotli": "1.0.7",
+      "ares": "1.15.0",
+      "modules": "72",
+      "nghttp2": "1.38.0",
+      "napi": "4",
+      "llhttp": "1.1.3",
+      "http_parser": "2.8.0",
+      "openssl": "1.1.1b",
+      "cldr": "35.1",
+      "icu": "64.2",
+      "tz": "2019a",
+      "unicode": "12.1"
+    },
+    "release": {
+      "name": "node",
+      "headersUrl": "https://nodejs.org/download/release/v12.4.0/node-v12.4.0-headers.tar.gz",
+      "sourceUrl": "https://nodejs.org/download/release/v12.4.0/node-v12.4.0.tar.gz"
+    },
+    "osName": "Linux",
+    "osRelease": "4.19.75-v7+",
+    "osVersion": "#1270 SMP Tue Sep 24 18:45:11 BST 2019",
+    "osMachine": "armv7l",
+    "host": "raspberrypi"
+  },
+  "javascriptStack": {
+    "message": "No stack.",
+    "stack": [
+      "Unavailable."
+    ]
+  },
+  "nativeStack": [
+  ],
+  "javascriptHeap": {
+    "totalMemory": 233406464,
+    "totalCommittedMemory": 231309328,
+    "usedMemory": 229206916,
+    "availableMemory": 3815616,
+    "memoryLimit": 234881024,
+    "heapSpaces": {
+      "read_only_space": {
+        "memorySize": 524288,
+        "committedMemory": 21652,
+        "capacity": 524132,
+        "used": 21496,
+        "available": 502636
+      },
+      "new_space": {
+        "memorySize": 2097152,
+        "committedMemory": 782844,
+        "capacity": 1048264,
+        "used": 258108,
+        "available": 790156
+      },
+      "old_space": {
+        "memorySize": 202444800,
+        "committedMemory": 202273800,
+        "capacity": 201301500,
+        "used": 201301500,
+        "available": 0
+      },
+      "code_space": {
+        "memorySize": 1732608,
+        "committedMemory": 1711808,
+        "capacity": 1286144,
+        "used": 1286144,
+        "available": 0
+      },
+      "map_space": {
+        "memorySize": 528384,
+        "committedMemory": 439992,
+        "capacity": 316280,
+        "used": 316280,
+        "available": 0
+      },
+      "large_object_space": {
+        "memorySize": 26030080,
+        "committedMemory": 26030080,
+        "capacity": 26019356,
+        "used": 26019356,
+        "available": 0
+      },
+      "code_large_object_space": {
+        "memorySize": 49152,
+        "committedMemory": 49152,
+        "capacity": 4032,
+        "used": 4032,
+        "available": 0
+      },
+      "new_large_object_space": {
+        "memorySize": 0,
+        "committedMemory": 0,
+        "capacity": 1048264,
+        "used": 0,
+        "available": 1048264
+      }
+    }
+  },
+  "resourceUsage": {
+    "userCpuSeconds": 128.206,
+    "kernelCpuSeconds": 2.88869,
+    "cpuConsumptionPercent": 12.9668,
+    "maxRss": 259493888,
+    "pageFaults": {
+      "IORequired": 4859,
+      "IONotRequired": 205760
+    },
+    "fsActivity": {
+      "reads": 430704,
+      "writes": 0
+    }
+  },
+  "uvthreadResourceUsage": {
+    "userCpuSeconds": 62.7013,
+    "kernelCpuSeconds": 1.79922,
+    "cpuConsumptionPercent": 6.37988,
+    "fsActivity": {
+      "reads": 369440,
+      "writes": 0
+    }
+  },
+  "libuv": [
+  ],
+  "environmentVariables": {
+    "MAIL": "/var/mail/pi",
+    "LANGUAGE": "en_US.UTF-8",
+    "USER": "pi",
+    "SSH_CLIENT": "fe80::96b:b3aa:4f92:c61d%eth0 65328 22",
+    "XDG_SESSION_TYPE": "tty",
+    "SHLVL": "0",
+    "HOME": "/home/pi",
+    "DBUS_SESSION_BUS_ADDRESS": "unix:path=/run/user/1000/bus",
+    "LOGNAME": "pi",
+    "_": "/home/pi/.vscode-server-insiders/bin/3f6ed25939b8ef157a7a41e0dc43b517898d4005/node",
+    "XDG_SESSION_CLASS": "user",
+    "XDG_SESSION_ID": "c3",
+    "PATH": "/home/pi/.vscode-server-insiders/bin/3f6ed25939b8ef157a7a41e0dc43b517898d4005/bin:/home/pi/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games",
+    "VSCODE_AGENT_FOLDER": "/home/pi/.vscode-server-insiders",
+    "XDG_RUNTIME_DIR": "/run/user/1000",
+    "LANG": "en_US.UTF-8",
+    "SHELL": "/bin/bash",
+    "PWD": "/home/pi",
+    "LC_ALL": "en_US.UTF-8",
+    "SSH_CONNECTION": "fe80::96b:b3aa:4f92:c61d%eth0 65328 fe80::ba27:ebff:feb2:8484%eth0 22",
+    "VSCODE_INJECT_NODE_MODULE_LOOKUP_PATH": "/home/pi/.vscode-server-insiders/bin/3f6ed25939b8ef157a7a41e0dc43b517898d4005/remote/node_modules",
+    "VSCODE_LOGS": "/home/pi/.vscode-server-insiders/data/logs/20191016T191140",
+    "NO_AT_BRIDGE": "1",
+    "LS_COLORS": "",
+    "TEXTDOMAIN": "Linux-PAM",
+    "AMD_ENTRYPOINT": "vs/server/remoteExtensionHostProcess",
+    "PIPE_LOGGING": "true",
+    "VERBOSE_LOGGING": "true",
+    "VSCODE_EXTHOST_WILL_SEND_SOCKET": "true",
+    "VSCODE_HANDLES_UNCAUGHT_ERRORS": "true",
+    "VSCODE_LOG_STACK": "false",
+    "VSCODE_NLS_CONFIG": "{\"locale\":\"en\",\"availableLanguages\":{}}",
+    "VSCODE_IPC_HOOK_CLI": "/tmp/vscode-ipc-0ba3b4a2-31ac-427d-9f49-702690c52466.sock",
+    "APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL": "true",
+    "ELECTRON_RUN_AS_NODE": "1",
+    "ELECTRON_NO_ASAR": "1"
+  },
+  "userLimits": {
+    "core_file_size_blocks": {
+      "soft": 0,
+      "hard": "unlimited"
+    },
+    "data_seg_size_kbytes": {
+      "soft": "unlimited",
+      "hard": "unlimited"
+    },
+    "file_size_blocks": {
+      "soft": "unlimited",
+      "hard": "unlimited"
+    },
+    "max_locked_memory_bytes": {
+      "soft": "unlimited",
+      "hard": "unlimited"
+    },
+    "max_memory_size_kbytes": {
+      "soft": "unlimited",
+      "hard": "unlimited"
+    },
+    "open_files": {
+      "soft": 1048576,
+      "hard": 1048576
+    },
+    "stack_size_bytes": {
+      "soft": 8388608,
+      "hard": "unlimited"
+    },
+    "cpu_time_seconds": {
+      "soft": "unlimited",
+      "hard": "unlimited"
+    },
+    "max_user_processes": {
+      "soft": 6924,
+      "hard": 6924
+    },
+    "virtual_memory_kbytes": {
+      "soft": "unlimited",
+      "hard": "unlimited"
+    }
+  },
+  "sharedObjects": [
+    "linux-vdso.so.1",
+    "/usr/lib/arm-linux-gnueabihf/libarmmem-v7l.so",
+    "/lib/arm-linux-gnueabihf/libdl.so.2",
+    "/lib/arm-linux-gnueabihf/librt.so.1",
+    "/usr/lib/arm-linux-gnueabihf/libstdc++.so.6",
+    "/lib/arm-linux-gnueabihf/libm.so.6",
+    "/lib/arm-linux-gnueabihf/libgcc_s.so.1",
+    "/lib/arm-linux-gnueabihf/libpthread.so.0",
+    "/lib/arm-linux-gnueabihf/libc.so.6",
+    "/lib/ld-linux-armhf.so.3"
+  ]
+}
