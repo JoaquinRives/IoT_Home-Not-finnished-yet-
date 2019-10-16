@@ -35,6 +35,8 @@ def create_chart(chart_settings):
             # Import sensor data
             df = pd.read_csv(config.SENSOR_DATA_FILE, sep=";")
 
+            df.replace(to_replace="nan", value=None, inplace=True)
+
             # Columns of the data that we want to use
             features_to_plot = chart_settings["features"]
             features_to_use = ['time_stamp'] + features_to_plot
@@ -79,7 +81,7 @@ def create_chart(chart_settings):
 
             layout = go.Layout(yaxis=dict(range=chart_settings["y_axis"]))
             fig = go.Figure(data=data, layout=layout)
-            fig.update_layout(title_text='Sensor Data', xaxis_rangeslider_visible=True)
+            fig.update_layout(title_text='<b>Sensor Data</b>', xaxis_rangeslider_visible=True)
             filename = str(config.APP_ROOT) + f"/static/{chart_name}.html"
             plotly.offline.plot(fig, filename=filename, auto_open=False)
 

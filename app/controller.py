@@ -32,11 +32,51 @@ chart_thread.start()
 # outputFrame = None
 # lock = threading.Lock()
 
-# To execute before exiting
+
 def before_exit():
+    """ To execute before exiting """
+
+    logger.info("Before exiting function started...")
+
+    global chart_thread, data_collection_thread
+    
+    # Stop all threads
+    if chart_thread:
+        logger.info("Stopping chart thread")
+        chart_thread.do_run = False
+        chart_thread.join()
+        chart_thread = None
+
+    if data_collection_thread:
+        logger.info("Stopping data collection thread")
+        data_collection_thread.do_run = False
+        data_collection_thread.join()
+        data_collection_thread = None
+
+    if rp1.webcam_thread:
+        logger.info("Stopping webcam thread")
+        rp1.stop_webcam()
+
+    if rp1.surveillance_thread:
+        logger.info("Stopping surveillance thread")
+        rp1.stop_surveillance()
+
+    if not all(thread is None for thread in rp1.timer_threads):
+        logger.info("Stopping timer threads")
+        for thread in rp1.timer_threads:
+            if thread:
+                rp1.stop_timer(thread)
+    
+    if not all(thread is None for thread in rp1.auto_threads):
+        logger.info("Stopping auto threads")
+        for thread in rp1.auto_threads:
+            if thread:
+                rp1.stop_auto(thread)
+    
     # Reset the GPIOs before exit the App
     rp1.clean_up()
-    logger.info("Exiting app")
+
+    logger.info("Before exiting function finnish")
 
 atexit.register(before_exit)
 
@@ -254,4 +294,12 @@ def set_auto():
                     rp1.stop_timer(actuator)
 
     return redirect(f"/{deviceName}/{unit}/auto")
+
+
+@app.route('/shutdown', methods=['GET'])
+def safe_exit():
+    before_exit()
+    logger.info('Shutting down server')
+    exit()
+    return 'Server closed'
 

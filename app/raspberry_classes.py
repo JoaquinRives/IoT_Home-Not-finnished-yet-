@@ -46,6 +46,7 @@ class Raspberry1:
         self.vs = None
 
         # Surveillance camera
+        self.surveillance_thread = None
         self.pi_camera = None
         self.pi_camera_Sts = 'Off'
 

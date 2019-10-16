@@ -1,7 +1,6 @@
- import app.config.config as config
+lista = [None, 2, None]
 
- n_days = 30
- 
-filename = str(config.APP_ROOT) + f"/static/chart_{n_days}_days.html"
-
-print(filename)
+if not all(x is None for x in lista):
+    print(1)
+else:
+    print(0)
