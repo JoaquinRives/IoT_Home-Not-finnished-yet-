@@ -65,13 +65,13 @@ def before_exit():
         logger.info("Stopping timer threads")
         for thread in rp1.timer_threads:
             if thread:
-                rp1.stop_timer(thread)
+                rp1.stop_timer(rp1.timer_threads.index(thread))
     
     if not all(thread is None for thread in rp1.auto_threads):
         logger.info("Stopping auto threads")
         for thread in rp1.auto_threads:
             if thread:
-                rp1.stop_auto(thread)
+                rp1.stop_auto(rp1.auto_threads.index(thread))
     
     # Reset the GPIOs before exit the App
     rp1.clean_up()
@@ -298,8 +298,7 @@ def set_auto():
 
 @app.route('/shutdown', methods=['GET'])
 def safe_exit():
-    before_exit()
     logger.info('Shutting down server')
     exit()
-    return 'Server closed'
+    return None
 
