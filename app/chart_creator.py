@@ -88,7 +88,7 @@ def create_chart(chart_settings):
             logger.info("Sensor chart updated")
 
             # Set the next update in 20 min and go to sleep
-            next_update = dt.datetime.now() + dt.timedelta(minutes=3)
+            next_update = dt.datetime.now() + dt.timedelta(minutes=15)
             time.sleep(10)
 
         else:

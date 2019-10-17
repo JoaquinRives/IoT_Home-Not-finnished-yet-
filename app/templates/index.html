@@ -144,7 +144,12 @@
 		<a href="/securityAlarm/On"class="button">Activate Surveillance</a>
 		<a href="/securityAlarm/Off"class="button">Deactivate Surveillance</a>
 
-	<embed src="{{ url_for('static', filename='sensor_chart.html')}}" width="1000" height="500">
-	<br>
+		<iframe id="myIframe" src="{{ url_for('static', filename='sensor_chart.html')}}" width="1000" height="500"></iframe>
+		
+		<script language="javascript" type="text/javascript">
+			getElementById('myIframe').contentDocument.location.reload()
+		</script>
+		
+		<br>
    </body>
 </html>

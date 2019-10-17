@@ -7,7 +7,6 @@ from flask import Response
 from flask import render_template
 import threading
 from app.camera_management import generate_video_feed
-from app.sensor_data_handling import data_collection, get_sensorhub_data
 from app.chart_creator import create_chart
 import app.config.config as config
 
@@ -20,8 +19,7 @@ app = Blueprint('app', __name__)
 rp1 = Raspberry1()
 
 # Start collecting data from the sensors
-data_collection_thread = threading.Thread(target=data_collection)
-data_collection_thread.start()
+rp1.start_data_collection()
 
 # Create chart and keep it updated
 chart_thread = threading.Thread(target=create_chart, args=(config.CHART_SETTINGS_1,))
@@ -47,11 +45,9 @@ def before_exit():
         chart_thread.join()
         chart_thread = None
 
-    if data_collection_thread:
+    if rp1.data_collection_thread:
         logger.info("Stopping data collection thread")
-        data_collection_thread.do_run = False
-        data_collection_thread.join()
-        data_collection_thread = None
+        rp1.stop_data_collection()
 
     if rp1.webcam_thread:
         logger.info("Stopping webcam thread")
@@ -78,8 +74,6 @@ def before_exit():
 
     logger.info("Before exiting function finnish")
 
-atexit.register(before_exit)
-
 
 @app.route('/health', methods=['GET'])
 def health():
@@ -92,13 +86,23 @@ def health():
 @app.route('/index')
 def index():
     
-    # Read Status and pass them to the index.html  # TODO: add get_sensorhub_data()
+    # Get data from the sensors
+    data = rp1.get_sensorhub_data()
+
+    # Read Status and pass everything to the index.html
     template_data = {
-        'relay1_Sts': rp1.get_status(rp1.relay1),
-        'relay2_Sts': rp1.get_status(rp1.relay2),
-        'relay3_Sts': rp1.get_status(rp1.relay3),
-        'relay4_Sts': rp1.get_status(rp1.relay4),
-        'webcam_Sts': rp1.webcam_Sts,
+        "relay1_Sts": rp1.get_status(rp1.relay1),
+        "relay2_Sts": rp1.get_status(rp1.relay2),
+        "relay3_Sts": rp1.get_status(rp1.relay3),
+        "relay4_Sts": rp1.get_status(rp1.relay4),
+        "webcam_Sts": rp1.webcam_Sts,
+        "off-chip temperature": data["off-chip temperature"],
+        "brightness": data["brightness"],
+        "onboard temperature": data["onboard temperature"],
+        "onboard humidity": data["onboard humidity"],
+        "barometer temperature": data["barometer temperature"],
+        "barometer pressure": data["barometer pressure"],
+        "humans detected": data["humans detected"]
     }
     return render_template('index.html', **template_data)
 
@@ -294,3 +298,6 @@ def set_auto():
                     rp1.stop_timer(actuator)
 
     return redirect(f"/{deviceName}/{unit}/auto")
+
+
+atexit.register(before_exit)
