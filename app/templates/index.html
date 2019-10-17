@@ -1,6 +1,17 @@
 <!DOCTYPE html>
    <head>
-	  <title>GPIO Control</title>
+
+		<script>
+				function refreshPage(){
+					window.location.reload();
+				} 
+				</script>
+
+		<!-- <meta http-equiv="refresh" content="30" > -->
+
+
+
+	  <title>IoT Home</title>
 	
 	  {% with messages = get_flashed_messages() %}
   	{% if messages %}
@@ -12,21 +23,20 @@
   	{% endif %}
 	{% endwith %}
 
+	<a class="weatherwidget-io" href="https://forecast7.com/en/40d71n74d01/new-york/" data-label_1="NEW YORK" data-label_2="WEATHER" data-theme="metallic" >NEW YORK WEATHER</a>
+<script>
+!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src='https://weatherwidget.io/js/widget.min.js';fjs.parentNode.insertBefore(js,fjs);}}(document,'script','weatherwidget-io-js');
+</script>
+<br>
 
-	<div style="float: right;">
-			<div id="cont_72a1a15f9e90423f2adcd14624df284f"><script type="text/javascript" async src="https://www.theweather.com/wid_loader/72a1a15f9e90423f2adcd14624df284f"></script></div>
-	</div>
-	
-	<div>
-		<br>
-		<iframe src="http://free.timeanddate.com/clock/i6yru88u/n296/fs16/pct/pd2/tt0/tm1/td2/th1/tb4" frameborder="0" width="191" height="40" allowTransparency="true"></iframe>
-	</div>
-
+				<h1>__________________________ IoT Home __________________________ </h1>
+		
 	<link rel="stylesheet" href="../static/style.css/">
    </head>
    <body>
-		<h1>Raspberry 1</h1>
 		
+		<div>
+			<br>
 			<h2> Relays (Status & Control) </h2>
 		<table>
 			<tr >
@@ -42,15 +52,15 @@
 						<img src="{{url_for('static', filename='light_on_icon3.jpg')}}" />
 					{% endif %}
 				</td>
-				<td width=90 >
+				<td width=77 >
 					{% if  relay1_Sts[0]   == 'On' %}
-						<a href="/Relays/1/Off"class="button">TURN OFF</a>
+						<a href="/Relays/1/Off"class="button">Turn Off</a>
 					{% else %}
-						<a href="/Relays/1/On" class="button">TURN ON</a>
+						<a href="/Relays/1/On" class="button">Turn On</a>
 					{% endif %}
 				</td>
-				<td width=68>
-					<a href="/timer/Relays/1"class="button">TIMER</a>
+				<td width=60>
+					<a href="/timer/Relays/1"class="button">Timer</a>
 				</td>	
 			</tr>
 			<tr>
@@ -70,16 +80,16 @@
 				</td>	
 				<td>
 					{% if  relay2_Sts[0]   == 'On' %}
-						<a href="/Relays/2/Off"class="button">TURN OFF</a>
+						<a href="/Relays/2/Off"class="button">Turn Off</a>
 					{% else %}
-						<a href="/Relays/2/On" class="button">TURN ON</a>
+						<a href="/Relays/2/On" class="button">Turn On</a>
 					{% endif %}
 				</td>
 				<td>
-					<a href="/timer/Relays/2"class="button">TIMER</a>
+					<a href="/timer/Relays/2"class="button">Timer</a>
 				</td>
 				<td>
-					<a href="/auto/Relays/2"class="button">AUTO</a>
+					<a href="/auto/Relays/2"class="button">Auto</a>
 				</td>
 			</tr>
 			<tr>
@@ -97,13 +107,13 @@
 				</td>
 				<td>
 					{% if  relay3_Sts[0]   == 'On' %}
-						<a href="/Relays/3/Off"class="button">TURN OFF</a>
+						<a href="/Relays/3/Off"class="button">Turn Off</a>
 					{% else %}
-						<a href="/Relays/3/On" class="button">TURN ON</a>
+						<a href="/Relays/3/On" class="button">Turn Off</a>
 					{% endif %}
 				</td>
 				<td>
-					<a href="/timer/Relays/3"class="button">TIMER</a>
+					<a href="/timer/Relays/3"class="button">Timer</a>
 				</td>	
 			</tr>
 			<tr>
@@ -121,35 +131,187 @@
 				</td>
 				<td>
 					{% if  relay4_Sts[0]   == 'On' %}
-						<a href="/Relays/4/Off"class="button">TURN OFF</a>
+						<a href="/Relays/4/Off"class="button">Turn Off</a>
 					{% else %}
-						<a href="/Relays/4/On" class="button">TURN ON</a>
+						<a href="/Relays/4/On" class="button">Turn On</a>
 					{% endif %}
 				</td>
 				<td>
-					<a href="/timer/Relays/4"class="button">TIMER</a>
+					<a href="/timer/Relays/4"class="button">Timer</a>
 				</td>	
 			</tr>
 		</table>
-		<br>
-		{% if  webcam_Sts   == 'On' %}
-		<img src="{{ url_for('app.video_feed') }}">
-		{% endif %}
-		<a href="/webcam/On"class="button">Open Webcam</a>
-		<a href="/webcam/Off"class="button">Close Webcam</a>
-		<br>
-		<br>
-		<h3>Security Alarm</h3>
-		<br>
-		<a href="/securityAlarm/On"class="button">Activate Surveillance</a>
-		<a href="/securityAlarm/Off"class="button">Deactivate Surveillance</a>
+	</div>
+<br>
+<br>
 
+	<div>
+		<h2>Sensor Data</h2>
+
+		<table>
+			<tr>
+				<td>
+					<p style="color:white ;">
+						
+						Temperature OnBoard: <strong style="color:yellow;">{{ off_chip_temperature }} C°</strong><br>
+						Temperature OnBoard: <strong style="color:yellow;">{{ onboard_temperature }} C°</strong><br>
+						Humidity: <strong style="color:yellow;">{{ onboard_humidity }} %</strong><br>
+						
+					</p>
+				</td>
+				<td></td><td></td><td></td><td></td><td></td>
+				<td>
+					<p style="color:white ;">
+						
+						Pressure: <strong style="color:yellow;">{{ barometer_pressure }} Pa</strong>	<br>
+						Barometer Temp: <strong style="color:yellow;">{{ barometer_temperature }} C°</strong><br>
+						Brightness: <strong style="color:yellow;">{{ brightness }} lm</strong><br>
+						
+					</p>
+
+				</td>
+				<td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+				<td>
+						<button type="submit"  onClick="refreshPage()"><a style="font-size: 11pt;">Update</a></button>
+				</td>
+			</tr>
+		</table>
+		<br>
 		<iframe id="myIframe" src="{{ url_for('static', filename='sensor_chart.html')}}" width="1000" height="500"></iframe>
 		
 		<script language="javascript" type="text/javascript">
 			getElementById('myIframe').contentDocument.location.reload()
 		</script>
-		
+
+	</div>
+
+	<div>
 		<br>
+		<br>
+		<br>
+
+		<h2>Security</h2>
+
+		<br>
+
+		<table>
+			<tr>
+				<td>
+						<style>
+								.containerdiv { float: left; position: relative; } 
+								.cornerimage { position: absolute; top: 0; right: 0; } 
+						</style>
+								
+								<div class="containerdiv">
+									
+									{% if  webcam_Sts   == 'On' %}
+									<img src="{{ url_for('app.video_feed') }}" >
+									
+									{% elif camera_Sts == 'On' %}
+
+    								<img src="{{url_for('static', filename='surveillance_wallpaper.png')}}" >
+									
+									{% else %}
+
+									<img src="{{url_for('static', filename='webcam_wallpaper.png')}}" >
+									
+									{% endif %}
+								<div>
+
+
+						
+								</td>
+				<td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+				<td>
+						<a href="/webcam/On"class="button">Open Webcam</a><br>
+						<br>
+						<a href="/webcam/Off"class="button">Close Webcam</a>
+				</td>
+			</tr>
+		</table>
+
+		<div></div>
+		<br>
+		<br>
+		<table>
+			<tr>
+				<td>
+					{% if camera_Sts == 'On' %}
+					<img src="{{url_for('static', filename='sirena100.png')}}" >
+					{% else %}
+					<img src="{{url_for('static', filename='sirena100offnew.png')}}" >
+					{% endif %}
+				</td>
+				<td>
+					<br>
+					<br>
+					<br>
+					<a style="color: crimson;" href="/securityAlarm/On"class="button">Activate Alarm</a>
+					<a style="color: crimson;" href="/securityAlarm/Off"class="button">Deactivate Alarm</a>
+				</td>
+
+			</tr>
+		</table>
+	</div>
+
+	<table>
+		<tr>
+			<td>
+					<b style="color:red;">Security Log: </b>
+			</td>
+			<td  width="635px" style="text-align:right;">
+					<button type="submit"  onClick="refreshPage()"><a style="font-size: 11pt;">Update</a></button>
+			</td>
+		</tr>
+		</table>
+				
+				
+
+				<div  id="Container" style="height:300px;width:700px;overflow:auto;border:5px solid red;padding:1%">
+
+						{% if camera_Sts == 'On' %}
+						<a style="color:white;">
+			
+								This scroll box has had a border added to it. You can add borders to anything in HTML 
+							- including scroll boxes.
+							This scroll box has had a border added to it. You can add borders to anything in HTML 
+							- including scroll boxes.This scroll box has had a border added to it. You can add borders to anything in HTML 
+							- including scroll boxes.This scroll box has had a border added to it. You can add borders to anything in HTML 
+							- including scroll boxes.This scroll box has had a border added to it. You can add borders to anything in HTML 
+							- including scroll boxes.This scroll box has had a border added to it. You can add borders to anything in HTML 
+							- including scroll boxes.This scroll box has had a border added to it. You can add borders to anything in HTML 
+							- including scroll boxes.This scroll box has had a border added to it. You can add borders to anything in HTML 
+							- including scroll boxes.This scroll box has had a border added to it. You can add borders to anything in HTML 
+							- including scroll boxes.This scroll box has had a border added to it. You can add borders to anything in HTML 
+							- including scroll boxes.This scroll box has had a border added to it. You can add borders to anything in HTML 
+							- including scroll boxes.This scroll box has had a border added to it. You can add borders to anything in HTML 
+							- including scroll boxes.This scroll box has had a border added to it. You can add borders to anything in HTML 
+							- including scroll boxes.This scroll box has had a border added to it. You can add borders to anything in HTML 
+							- including scroll boxes.This scroll box has had a border added to it. You can add borders to anything in HTML 
+							- including scroll boxes.This scroll box has had a border added to it. You can add borders to anything in HTML 
+							- including scroll boxes.This scroll box has had a border added to it. You can add borders to anything in HTML 
+							- including scroll boxes.This scroll box has had a border added to it. You can add borders to anything in HTML 
+							- including scroll boxes.This scroll box has had a border added to it. You can add borders to anything in HTML 
+							- including scroll boxes.This scroll box has had a border added to it. You can add borders to anything in HTML 
+							- including scroll boxes.
+			
+						</a>
+
+						{% else %}
+						<a style="color:white;">
+								Alarm desactivated.
+						</a>
+						
+
+						{% endif %}	
+				</div>
+
+	
+	
+
+	<br>
+	<br>
+
+	
    </body>
 </html>

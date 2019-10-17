@@ -7,4 +7,4 @@ application = create_app(
 
 
 if __name__ == '__main__':
-    application.run(threaded=True, use_reloader=False)
+    application.run(threaded=True, use_reloader=True)

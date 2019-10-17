@@ -96,13 +96,15 @@ def index():
         "relay3_Sts": rp1.get_status(rp1.relay3),
         "relay4_Sts": rp1.get_status(rp1.relay4),
         "webcam_Sts": rp1.webcam_Sts,
-        "off-chip temperature": data["off-chip temperature"],
+        "off_chip_temperature": data["off_chip_temperature"],
         "brightness": data["brightness"],
-        "onboard temperature": data["onboard temperature"],
-        "onboard humidity": data["onboard humidity"],
-        "barometer temperature": data["barometer temperature"],
-        "barometer pressure": data["barometer pressure"],
-        "humans detected": data["humans detected"]
+        "onboard_temperature": data["onboard_temperature"],
+        "onboard_humidity": data["onboard_humidity"],
+        "barometer_temperature": data["barometer_temperature"],
+        "barometer_pressure": data["barometer_pressure"],
+        "humans_detected": data["humans_detected"],
+        "camera_Sts": rp1.pi_camera_Sts,
+        "webcam_Sts":  rp1.webcam_Sts
     }
     return render_template('index.html', **template_data)
 

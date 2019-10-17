@@ -11,6 +11,19 @@ import logging
 import smbus
 import datetime
 import os
+from app.pyimagesearch.motion_detection import SingleMotionDetector
+from app.pyimagesearch.tempimage import TempImage
+from picamera.array import PiRGBArray
+from app.config import config
+from app.emailer_classes import EmailSender
+import warnings
+import threading
+import dropbox
+import datetime
+import imutils
+import time
+import cv2
+import logging
 
 
 logger = logging.getLogger(__name__)
@@ -168,51 +181,211 @@ class Raspberry1:
 
 
     def start_webcam(self):
-        self.vs = VideoStream(src=0).start()
-        self.webcam_Sts = 'On'
+        if self.pi_camera_Sts == 'On':
+            self.stop_surveillance()
         
-        self.webcam_thread = threading.Thread(target=detect_motion, args=(36, self.vs,))
-        self.webcam_thread.daemon = True
-        self.webcam_thread.start()
-        
-        logger.info("Webcam activated!")
+        if  self.webcam_Sts == 'Off':  
+            self.vs = VideoStream(src=0).start()
+            self.webcam_Sts = 'On'
+            
+            self.webcam_thread = threading.Thread(target=detect_motion, args=(36, self.vs,))
+            self.webcam_thread.daemon = True
+            self.webcam_thread.start()
+            
+            logger.info("Webcam activated!")
 
 
     def stop_webcam(self):
-        self.vs.stop()
-        self.vs = None
-        self.webcam_Sts = 'Off'
+        if  self.webcam_Sts == 'On':
+            self.vs.stop()
+            self.vs = None
+            self.webcam_Sts = 'Off'
 
-        self.webcam_thread.do_run = False
-        self.webcam_thread.join()
-        self.webcam_thread = None
-        
-        logger.info("Webcam deactivated!")
+            self.webcam_thread.do_run = False
+            self.webcam_thread.join()
+            self.webcam_thread = None
+            
+            logger.info("Webcam deactivated!")
 
 
     def start_surveillance(self):
-        self.pi_camera = PiCamera()
-        self.pi_camera_Sts = 'On'
+        if  self.webcam_Sts == 'On':
+            self.stop_webcam()
 
-        self.surveillance_thread = threading.Thread(target=pi_surveillance, args=(self.pi_camera,))
-        #self.urveillancem_thread.daemon = True
-        self.surveillance_thread.start()
-        
-        flash("Security Alarm activated!")
-        logger.info("Security Alarm activated!")
+        if self.pi_camera_Sts == 'Off':
+            self.pi_camera = PiCamera()
+            self.pi_camera_Sts = 'On'
+
+            self.surveillance_thread = threading.Thread(target=self.pi_surveillance, args=(self.pi_camera,))
+            self.surveillance_thread.daemon = True
+            self.surveillance_thread.start()
+            
+            flash("Security Alarm activated!")
+            logger.info("Security Alarm activated!")
 
 
     def stop_surveillance(self):
-        self.pi_camera.stop_preview() # TODO borrar
-        self.pi_camera.close()
-        self.pi_camera_Sts = 'Off'
+        if self.pi_camera_Sts == 'On':   
+            done = False
+            while not done:
+                try:
+                    self.pi_camera.close()
+                    time.sleep(2)
+                    done = True
 
-        self.surveillance_thread.do_run = False
-        self.surveillance_thread.join()
-        self.surveillance_thread = None
+                except:
+                    logger.warning("Exception regarding the buffer when closing pi_camera")
+                    done = False
+            
+            self.pi_camera_Sts = 'Off'        
 
-        flash("Security Alarm deactivated!")
-        logger.info("Security Alarm deactivated!")
+
+            flash("Security Alarm deactivated!")
+            logger.info("Security Alarm deactivated!")
+
+    
+    def pi_surveillance(self, pi_camera):
+        warnings.filterwarnings("ignore")
+
+        if config.surveillance_config["use_dropbox"]:
+            # connect to dropbox and start the session authorization process
+            client = dropbox.Dropbox(config.surveillance_config["dropbox_access_token"])
+            logger.info("dropbox account linked")
+
+        # initialize the camera and grab a reference to the raw camera capture
+        camera = pi_camera
+        camera.resolution = tuple(config.surveillance_config["resolution"])
+        camera.framerate = config.surveillance_config["fps"]
+        rawCapture = PiRGBArray(camera, size=tuple(config.surveillance_config["resolution"]))
+
+        # allow the camera to warmup, then initialize the average frame, last
+        # uploaded timestamp, and frame motion counter
+        logger.info("warming up camera...")
+        time.sleep(config.surveillance_config["camera_warmup_time"])
+        avg = None
+        lastUploaded = datetime.datetime.now()
+        lastEmailed = datetime.datetime.now()
+
+        recent_captures = tuple()
+
+        motionCounter = 0
+
+
+        for f in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
+            # grab the raw NumPy array representing the image and initialize
+            # the timestamp and occupied/unoccupied text
+            frame = f.array
+            timestamp = datetime.datetime.now()
+            text = "Unoccupied"
+
+            # resize the frame, convert it to grayscale, and blur it
+            frame = imutils.resize(frame, width=500)
+            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            gray = cv2.GaussianBlur(gray, (21, 21), 0)
+
+            # if the average frame is None, initialize it
+            if avg is None:
+                avg = gray.copy().astype("float")
+                rawCapture.truncate(0)
+                continue
+
+            # accumulate the weighted average between the current frame and
+            # previous frames, then compute the difference between the current
+            # frame and running average
+            cv2.accumulateWeighted(gray, avg, 0.5)
+            frameDelta = cv2.absdiff(gray, cv2.convertScaleAbs(avg))
+
+            # threshold the delta image, dilate the thresholded image to fill
+            # in holes, then find contours on thresholded image
+            thresh = cv2.threshold(frameDelta, config.surveillance_config["delta_thresh"], 255,
+                                cv2.THRESH_BINARY)[1]
+            thresh = cv2.dilate(thresh, None, iterations=2)
+            cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL,
+                                    cv2.CHAIN_APPROX_SIMPLE)
+            cnts = imutils.grab_contours(cnts)
+
+            # loop over the contours
+            for c in cnts:
+                # if the contour is too small, ignore it
+                if cv2.contourArea(c) < config.surveillance_config["min_area"]:
+                    continue
+
+                # compute the bounding box for the contour, draw it on the frame,
+                # and update the text
+                (x, y, w, h) = cv2.boundingRect(c)
+                cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                text = "Occupied"
+
+            # draw the text and timestamp on the frame
+            ts = timestamp.strftime("%A %d %B %Y %I:%M:%S%p")
+            cv2.putText(frame, "Room Status: {}".format(text), (10, 20),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+            cv2.putText(frame, ts, (10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX,
+                        0.35, (0, 0, 255), 1)
+
+            # check to see if the room is occupied
+            if text == "Occupied":
+                # check to see if enough time has passed between uploads
+                if (timestamp - lastUploaded).seconds >= config.surveillance_config["min_upload_seconds"]:
+                    # increment the motion counter
+                    motionCounter += 1
+
+                    # check to see if the number of frames with consistent motion is
+                    # high enough
+                    if motionCounter >= config.surveillance_config["min_motion_frames"]:
+                        logger.info('Security Alarm: Movement detected!')
+
+                        # Save capture in the surveillance_captures directory
+                        cv2.imwrite(f"{config.surveillance_config['captures_folder']}/{ts}.jpg", frame)
+                        logger.info(f"Capture saved: {config.surveillance_config['captures_folder']}/{ts}.jpg")
+                        
+                        # Add capture to recent captures
+                        recent_captures= (f"{config.surveillance_config['captures_folder']}/{ts}.jpg",) + recent_captures
+                        
+                        # check to see if dropbox sohuld be used
+                        if config.surveillance_config["use_dropbox"]:
+                            # write the image to temporary file
+                            t = TempImage()
+                            cv2.imwrite(t.path, frame)
+
+                            # upload the image to Dropbox and cleanup the tempory image
+                            logger.info("Dropbox upload: {}".format(ts))
+                            path = "/{base_path}/{timestamp}.jpg".format(
+                                base_path=config.surveillance_config["dropbox_base_path"], timestamp=ts)
+                            client.files_upload(open(t.path, "rb").read(), path)
+                            t.cleanup()
+
+                        if config.surveillance_config["email_alert"]:
+                            if (timestamp - lastEmailed).seconds >= config.surveillance_config["min_email_seconds"]:
+                                logger.info(f"Email sent: {str(recent_captures[:5])}")  # TODO
+
+                                # TODO: insert my link to dropbox
+                                # Send email notification with the most recent captures
+                                # TODO: Uncomment this
+                                # email_sender.send_email(
+                                #     subject="Security Alarm",
+                                #     message="The Surveillance Camera detected movement in your room.. \n
+                                #             "Dropbox Security Alarm: 'insert link to your dropbox here",
+                                #     attach_images=recent_captures[:config.surveillance_config["max_images_email"]]
+                                # )
+
+                                # update the last_emailed timestamp and recent_captures
+                                lastEmailed = timestamp
+                                recent_captures = tuple()
+
+                        # TODO: add a scrollable text box to index.html with to log the alarm events
+
+                        # update the last uploaded timestamp and reset the motion counter
+                        lastUploaded = timestamp
+                        motionCounter = 0
+
+            # otherwise, the room is not occupied
+            else:
+                motionCounter = 0
+
+            # clear the stream in preparation for the next frame
+            rawCapture.truncate(0)
+             
 
 
     def get_sensorhub_data(self):
@@ -248,12 +421,12 @@ class Raspberry1:
         # External temperature detection (probe)
         if aReceiveBuf[STATUS_REG] & 0x01 :
             logger.warning("Off-chip temperature sensor overrange!")
-            data["off-chip temperature"] = 'nan'
+            data["off_chip_temperature"] = 'nan'
         elif aReceiveBuf[STATUS_REG] & 0x02 :
             logger.warning("No external temperature sensor!")
-            data["off-chip temperature"] = 'nan'
+            data["off_chip_temperature"] = 'nan'
         else :
-            data["off-chip temperature"] = str(aReceiveBuf[TEMP_REG])
+            data["off_chip_temperature"] = str(aReceiveBuf[TEMP_REG])
         
         # Light intensity detection
         if aReceiveBuf[STATUS_REG] & 0x04 :
@@ -266,28 +439,28 @@ class Raspberry1:
             data["brightness"] = str((aReceiveBuf[LIGHT_REG_H] << 8 | aReceiveBuf[LIGHT_REG_L]))
 
         # OnBoard temperature sensor
-        data["onboard temperature"] = str(aReceiveBuf[ON_BOARD_TEMP_REG])
+        data["onboard_temperature"] = str(aReceiveBuf[ON_BOARD_TEMP_REG])
 
         # Humidity sensor
-        data["onboard humidity"] = str(aReceiveBuf[ON_BOARD_HUMIDITY_REG])
+        data["onboard_humidity"] = str(aReceiveBuf[ON_BOARD_HUMIDITY_REG])
 
         if aReceiveBuf[ON_BOARD_SENSOR_ERROR] != 0 :
             logger.warning("Onboard temperature and humidity sensor data may not be up to date!")
 
         # Pressure sensor
         if aReceiveBuf[BMP280_STATUS] == 0 :
-            data["barometer temperature"] = str(aReceiveBuf[BMP280_TEMP_REG])
-            data["barometer pressure"] = str((aReceiveBuf[BMP280_PRESSURE_REG_L] | aReceiveBuf[BMP280_PRESSURE_REG_M] << 8 | aReceiveBuf[BMP280_PRESSURE_REG_H] << 16))
+            data["barometer_temperature"] = str(aReceiveBuf[BMP280_TEMP_REG])
+            data["barometer_pressure"] = str((aReceiveBuf[BMP280_PRESSURE_REG_L] | aReceiveBuf[BMP280_PRESSURE_REG_M] << 8 | aReceiveBuf[BMP280_PRESSURE_REG_H] << 16))
         else :
             logger.warning("Onboard barometer works abnormally!")
-            data["barometer temperature"] = 'nan'
-            data["barometer pressure"] = 'nan'
+            data["barometer_temperature"] = 'nan'
+            data["barometer_pressure"] = 'nan'
 
         # Human detection
         if aReceiveBuf[HUMAN_DETECT] == 1 :
-            data["humans detected"] = '1'
+            data["humans_detected"] = '1'
         else:
-            data["humans detected"] = '0'
+            data["humans_detected"] = '0'
 
         return data
 
