@@ -9,17 +9,20 @@ PATH_CONFIG = pathlib.Path(__file__).resolve().parent
 # Path to the app
 APP_ROOT = pathlib.Path(PATH_CONFIG).resolve().parent
 
-# Path to data
-DATA_DIR = APP_ROOT / 'sensors_data'
-
 # Logging file
 LOG_FILE = APP_ROOT / 'log_file.log'
 
-# Sensor errors logging file
-SENSOR_ERROR_LOG_FILE = DATA_DIR / 'sensor_error.log'
+# Logging file sensor errors 
+SENSOR_ERROR_LOG_FILE = APP_ROOT / 'sensors_data/sensor_error.log'
 
 # Sensors data file
-SENSOR_DATA_FILE = DATA_DIR / 'sensor_data.txt'
+SENSOR_DATA_FILE = APP_ROOT / 'sensors_data/sensor_data.txt'
+
+# Logging file security system 
+SECURITY_SYSTEM_LOG_FILE = APP_ROOT / 'surveillance_data/security.log'
+
+# Surveillance captures directory
+SURVEILLANCE_CAPTURES_DIR = APP_ROOT / 'surveillance_data/captures'
 
 
 # Flask app
@@ -68,6 +71,9 @@ FORMAT_MAIN_LOGGER = logging.Formatter(
 
 FORMAT_SENSOR_LOGGER = logging.Formatter(
     "%(asctime)s — %(lineno)d — %(message)s")
+
+FORMAT_SECURITY_SYSTEM_LOGGER = logging.Formatter(
+    "%(asctime)s — %(message)s")
 
 
 def config_logger(logger, type="main"):
@@ -119,20 +125,42 @@ def config_logger(logger, type="main"):
 
         return logger
 
+    elif type == "security_system":
+        
+        # Config level
+        logging.basicConfig(
+            level=logging.DEBUG)  # To log everything, by default it only logs warning and above.
+
+        # Create handlers
+        c_handler = logging.StreamHandler()
+        f_handler = logging.FileHandler(SECURITY_SYSTEM_LOG_FILE)
+        c_handler.setLevel(logging.DEBUG)
+        f_handler.setLevel(logging.INFO)
+
+        # Create formatters and add it to handlers
+        c_handler.setFormatter(FORMAT_SECURITY_SYSTEM_LOGGER)
+        f_handler.setFormatter(FORMAT_SECURITY_SYSTEM_LOGGER)
+
+        # Add handlers to the logger
+        logger.addHandler(c_handler)
+        logger.addHandler(f_handler)
+
+        logger.propagate = False
+
+        return logger
+
     else:
         raise Exception("Argument 'type=' is not valid")
 
 
-
 # Security Alarm
-SURVEILLANCE_CAPTURES_DIR = APP_ROOT / 'surveillance_captures'
 
 surveillance_config = {
     "use_dropbox": False,
     "email_alert": True,
     "captures_folder": SURVEILLANCE_CAPTURES_DIR,
     "dropbox_access_token": "YOUR_DROPBOX_ACCESS_TOKEN",
-    "dropbox_base_path": "PATH_TO_DROPBOX_FOLDER",
+    "dropbox_base_path": "https://www.dropbox.com/home/Apps/rpi_iot_home/home/Apps/rpi_iot_home",
     "min_upload_seconds": 3.0,
     "min_email_seconds": 30.0,
     "max_images_email": 5,

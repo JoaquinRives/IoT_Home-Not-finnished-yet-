@@ -32,6 +32,9 @@ logger = config.config_logger(logger, type='main')
 sensor_logger = logging.getLogger(__name__)
 sensor_logger = config.config_logger(sensor_logger, type="sensor")
 
+security_system_logger = logging.getLogger(__name__)
+security_system_logger = config.config_logger(security_system_logger, type="security_system")
+
 
 class Raspberry1:
     def __init__(self):
@@ -222,6 +225,7 @@ class Raspberry1:
             
             flash("Security Alarm activated!")
             logger.info("Security Alarm activated!")
+            security_system_logger.info("Security Alarm activated!")
 
 
     def stop_surveillance(self):
@@ -242,6 +246,7 @@ class Raspberry1:
 
             flash("Security Alarm deactivated!")
             logger.info("Security Alarm deactivated!")
+            security_system_logger.info("Security Alarm deactivated!")
 
     
     def pi_surveillance(self, pi_camera):
@@ -334,6 +339,7 @@ class Raspberry1:
                     # high enough
                     if motionCounter >= config.surveillance_config["min_motion_frames"]:
                         logger.info('Security Alarm: Movement detected!')
+                        security_system_logger.info('Movement detected in the room!')
 
                         # Save capture in the surveillance_captures directory
                         cv2.imwrite(f"{config.surveillance_config['captures_folder']}/{ts}.jpg", frame)
@@ -349,31 +355,31 @@ class Raspberry1:
                             cv2.imwrite(t.path, frame)
 
                             # upload the image to Dropbox and cleanup the tempory image
-                            logger.info("Dropbox upload: {}".format(ts))
                             path = "/{base_path}/{timestamp}.jpg".format(
                                 base_path=config.surveillance_config["dropbox_base_path"], timestamp=ts)
                             client.files_upload(open(t.path, "rb").read(), path)
                             t.cleanup()
 
+                            logger.info("Dropbox upload: {}".format(ts))
+                            security_system_logger.info(f"Capture uploaded to Dropbox: {path}")
+
                         if config.surveillance_config["email_alert"]:
                             if (timestamp - lastEmailed).seconds >= config.surveillance_config["min_email_seconds"]:
-                                logger.info(f"Email sent: {str(recent_captures[:5])}")  # TODO
-
                                 # TODO: insert my link to dropbox
                                 # Send email notification with the most recent captures
                                 # TODO: Uncomment this
                                 # email_sender.send_email(
                                 #     subject="Security Alarm",
-                                #     message="The Surveillance Camera detected movement in your room.. \n
-                                #             "Dropbox Security Alarm: 'insert link to your dropbox here",
+                                #     message=f"The Surveillance Camera detected movement in your room.. \n
+                                #             "Dropbox Security Alarm: {config.surveillance_config["dropbox_base_path"]}
                                 #     attach_images=recent_captures[:config.surveillance_config["max_images_email"]]
                                 # )
-
+                                logger.info(f"Notification email sent: {str(recent_captures[:5])}")  # TODO
+                                security_system_logger.info(f"Email notification sent to '{config.TO_ADDR}'")
+                                
                                 # update the last_emailed timestamp and recent_captures
                                 lastEmailed = timestamp
                                 recent_captures = tuple()
-
-                        # TODO: add a scrollable text box to index.html with to log the alarm events
 
                         # update the last uploaded timestamp and reset the motion counter
                         lastUploaded = timestamp
