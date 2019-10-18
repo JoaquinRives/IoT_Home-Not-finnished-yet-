@@ -370,7 +370,7 @@ class Raspberry1:
                                 # Send email notification with the most recent captures
                                 email_sender.send_email(
                                     subject="Security Alarm",
-                                    message=f"The Surveillance Camera detected movement in your room. <br> {config.surveillance_config['dropbox_base_path']}",
+                                    message=f"The Surveillance Camera detected movement in your room. <br> www.{config.surveillance_config['dropbox_base_path']}",
                                     attach_images=recent_captures[:config.surveillance_config["max_images_email"]]
                                 )
                                 logger.info(f"Email security notification sent to {config.TO_ADDR}")

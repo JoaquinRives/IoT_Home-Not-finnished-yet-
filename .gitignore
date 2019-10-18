@@ -3,7 +3,10 @@
 .idea/workspace.xml
 *.log
 __pycache__/
+
 /app/surveillance_data/captures/*.jpg
 /app/surveillance_data/*.log
 /app/sensors_data/sensor_data.txt
 /app/sensor_data/*.log
+.vscode/
+*.pyc
