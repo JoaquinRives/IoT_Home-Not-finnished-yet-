@@ -89,6 +89,10 @@ def index():
     # Get data from the sensors
     data = rp1.get_sensorhub_data()
 
+    # Scrollable textbox of the security log
+    security_log_messages = rp1.security_log_updater()
+        
+
     # Read Status and pass everything to the index.html
     template_data = {
         "relay1_Sts": rp1.get_status(rp1.relay1),
@@ -104,7 +108,8 @@ def index():
         "barometer_pressure": data["barometer_pressure"],
         "humans_detected": data["humans_detected"],
         "camera_Sts": rp1.pi_camera_Sts,
-        "webcam_Sts":  rp1.webcam_Sts
+        "webcam_Sts":  rp1.webcam_Sts,
+        "security_log_messages": security_log_messages
     }
     return render_template('index.html', **template_data)
 
@@ -185,7 +190,7 @@ def actions(deviceName, unit, action):
             rp1.set_gpio(actuator, 'low')
         if action == "Off":
             rp1.set_gpio(actuator, 'high')
-
+            
     return redirect("/index")
 
 

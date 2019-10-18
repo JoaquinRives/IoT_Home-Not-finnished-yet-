@@ -269,41 +269,25 @@
 
 				<div  id="Container" style="height:300px;width:700px;overflow:auto;border:5px solid red;padding:1%">
 
-						{% if camera_Sts == 'On' %}
-						<a style="color:white;">
-			
-								This scroll box has had a border added to it. You can add borders to anything in HTML 
-							- including scroll boxes.
-							This scroll box has had a border added to it. You can add borders to anything in HTML 
-							- including scroll boxes.This scroll box has had a border added to it. You can add borders to anything in HTML 
-							- including scroll boxes.This scroll box has had a border added to it. You can add borders to anything in HTML 
-							- including scroll boxes.This scroll box has had a border added to it. You can add borders to anything in HTML 
-							- including scroll boxes.This scroll box has had a border added to it. You can add borders to anything in HTML 
-							- including scroll boxes.This scroll box has had a border added to it. You can add borders to anything in HTML 
-							- including scroll boxes.This scroll box has had a border added to it. You can add borders to anything in HTML 
-							- including scroll boxes.This scroll box has had a border added to it. You can add borders to anything in HTML 
-							- including scroll boxes.This scroll box has had a border added to it. You can add borders to anything in HTML 
-							- including scroll boxes.This scroll box has had a border added to it. You can add borders to anything in HTML 
-							- including scroll boxes.This scroll box has had a border added to it. You can add borders to anything in HTML 
-							- including scroll boxes.This scroll box has had a border added to it. You can add borders to anything in HTML 
-							- including scroll boxes.This scroll box has had a border added to it. You can add borders to anything in HTML 
-							- including scroll boxes.This scroll box has had a border added to it. You can add borders to anything in HTML 
-							- including scroll boxes.This scroll box has had a border added to it. You can add borders to anything in HTML 
-							- including scroll boxes.This scroll box has had a border added to it. You can add borders to anything in HTML 
-							- including scroll boxes.This scroll box has had a border added to it. You can add borders to anything in HTML 
-							- including scroll boxes.This scroll box has had a border added to it. You can add borders to anything in HTML 
-							- including scroll boxes.This scroll box has had a border added to it. You can add borders to anything in HTML 
-							- including scroll boxes.
-			
-						</a>
-
-						{% else %}
-						<a style="color:white;">
-								Alarm desactivated.
-						</a>
 						
+					{% if camera_Sts == 'On' and security_log_messages %}
 
-						{% endif %}	
+						{% for message in security_log_messages %}
+							
+						<a style="color:white;"> {{message}} </a> <br>
+						
+						{% endfor %}
+
+					{% elif camera_Sts == 'On' and not security_log_messages %}
+
+					<a style="color:white;"> Loading... [press "Update" button] </a>
+
+					{% else %}
+
+					<a style="color:white;"> Security Alarm desactivated </a>
+
+					{% endif %}
+						
 				</div>
 
 	

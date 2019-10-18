@@ -73,7 +73,7 @@ FORMAT_SENSOR_LOGGER = logging.Formatter(
     "%(asctime)s — %(lineno)d — %(message)s")
 
 FORMAT_SECURITY_SYSTEM_LOGGER = logging.Formatter(
-    "%(asctime)s — %(message)s")
+    "%(asctime)s - %(message)s")
 
 
 def config_logger(logger, type="main"):

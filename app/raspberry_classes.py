@@ -29,10 +29,10 @@ import logging
 logger = logging.getLogger(__name__)
 logger = config.config_logger(logger, type='main')
 
-sensor_logger = logging.getLogger(__name__)
+sensor_logger = logging.getLogger("sensor_logger")
 sensor_logger = config.config_logger(sensor_logger, type="sensor")
 
-security_system_logger = logging.getLogger(__name__)
+security_system_logger = logging.getLogger("security_logger")
 security_system_logger = config.config_logger(security_system_logger, type="security_system")
 
 
@@ -76,6 +76,14 @@ class Raspberry1:
         # Data collection
         self.data_collection_thread = None
 
+        # Security alarm logging
+       # TODO change path
+        with open(config.SECURITY_SYSTEM_LOG_FILE, 'r') as f:
+            self.number_of_lines = sum([1 for line in f])
+            self.end_positon = f.seek(0, os.SEEK_END)
+            self.security_log_messages = [] # List of new messages to display in the Security Log textbox of index.html
+
+
 
     def set_relays(self):
          # Define GPIOs as output
@@ -93,6 +101,43 @@ class Raspberry1:
         self.set_status(self.relay2, 'normal')
         self.set_status(self.relay3, 'normal')
         self.set_status(self.relay4, 'normal')
+
+
+    def security_log_updater(self):
+        """ 
+        Returns the messages to display in the scrollable 
+        textbox of the security log (index.html)
+        """
+        last_number_of_lines = self.number_of_lines 
+        last_end_position = self.end_positon 
+    
+        try:
+            # TODO change path
+            with open(config.SECURITY_SYSTEM_LOG_FILE, 'r') as f:
+                # Count the current number of lines
+                number_of_lines_now = sum([1 for line in f])
+
+                # Check if something has been added since last time
+                if number_of_lines_now > last_number_of_lines:
+                    # Set the pointer before the new lines
+                    f.seek(last_end_position, 0)
+                    
+                    # Append the new messages to the alarm_log list
+                    for line in f.readlines():
+                        self.security_log_messages.append(line)
+
+                    # Update the number of lines and the end position
+                    self.number_of_lines = number_of_lines_now
+                    self.end_positon = f.seek(0, os.SEEK_END)
+                    
+                    return self.security_log_messages[::-1]
+
+                else:
+                    return self.security_log_messages[::-1]
+        
+        except Exception as e:
+            self.security_log_messages.append(e)
+
 
     
     def set_gpio(self, gpio, output): 
@@ -223,6 +268,7 @@ class Raspberry1:
             self.surveillance_thread.daemon = True
             self.surveillance_thread.start()
             
+            self.security_log_messages = [] 
             flash("Security Alarm activated!")
             logger.info("Security Alarm activated!")
             security_system_logger.info("Security Alarm activated!")
@@ -241,12 +287,14 @@ class Raspberry1:
                     logger.warning("Exception regarding the buffer when closing pi_camera")
                     done = False
             
-            self.pi_camera_Sts = 'Off'        
+            self.pi_camera_Sts = 'Off' 
+                  
 
 
             flash("Security Alarm deactivated!")
             logger.info("Security Alarm deactivated!")
             security_system_logger.info("Security Alarm deactivated!")
+            
 
     
     def pi_surveillance(self, pi_camera):
