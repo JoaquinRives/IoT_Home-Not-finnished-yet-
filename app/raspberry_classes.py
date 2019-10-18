@@ -402,7 +402,6 @@ class Raspberry1:
         last_end_position = self.end_positon
 
         try:
-            # TODO change path
             with open(config.SECURITY_SYSTEM_LOG_FILE, 'r') as f:
                 # Count the current number of lines
                 number_of_lines_now = sum([1 for line in f])

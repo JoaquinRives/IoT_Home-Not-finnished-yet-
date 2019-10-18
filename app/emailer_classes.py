@@ -7,7 +7,7 @@ import logging
 from app.config import config
 import os
 
-logger = logging.getLogger(__name__)  # TODO
+logger = logging.getLogger(__name__)
 logger = config.config_logger(logger)
 
 
