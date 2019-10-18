@@ -13,6 +13,7 @@ import time
 logger = logging.getLogger(__name__)
 logger = config.config_logger(logger)
 
+
 def datetime_convert(x):
     """ Convert str to datetime format"""
     x = dt.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')

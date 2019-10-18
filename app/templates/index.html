@@ -9,8 +9,6 @@
 
 		<!-- <meta http-equiv="refresh" content="30" > -->
 
-
-
 	  <title>IoT Home</title>
 	
 	  {% with messages = get_flashed_messages() %}
@@ -28,13 +26,11 @@
 !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src='https://weatherwidget.io/js/widget.min.js';fjs.parentNode.insertBefore(js,fjs);}}(document,'script','weatherwidget-io-js');
 </script>
 <br>
-
 				<h1>__________________________ IoT Home __________________________ </h1>
 		
 	<link rel="stylesheet" href="../static/style.css/">
    </head>
    <body>
-		
 		<div>
 			<br>
 			<h2> Relays (Status & Control) </h2>
@@ -144,19 +140,15 @@
 	</div>
 <br>
 <br>
-
 	<div>
 		<h2>Sensor Data</h2>
-
 		<table>
 			<tr>
 				<td>
 					<p style="color:white ;">
-						
 						Temperature OnBoard: <strong style="color:yellow;">{{ off_chip_temperature }} C°</strong><br>
 						Temperature OnBoard: <strong style="color:yellow;">{{ onboard_temperature }} C°</strong><br>
 						Humidity: <strong style="color:yellow;">{{ onboard_humidity }} %</strong><br>
-						
 					</p>
 				</td>
 				<td></td><td></td><td></td><td></td><td></td>
@@ -166,9 +158,7 @@
 						Pressure: <strong style="color:yellow;">{{ barometer_pressure }} Pa</strong>	<br>
 						Barometer Temp: <strong style="color:yellow;">{{ barometer_temperature }} C°</strong><br>
 						Brightness: <strong style="color:yellow;">{{ brightness }} lm</strong><br>
-						
 					</p>
-
 				</td>
 				<td></td><td></td><td></td><td></td><td></td><td></td><td></td>
 				<td>
@@ -177,23 +167,18 @@
 			</tr>
 		</table>
 		<br>
-		<iframe id="myIframe" src="{{ url_for('static', filename='sensor_chart.html')}}" width="1000" height="500"></iframe>
+		<iframe id="myIframe" src="{{ url_for('static', filename='sensor_chart.html')}}" width="900" height="460"></iframe>
 		
 		<script language="javascript" type="text/javascript">
 			getElementById('myIframe').contentDocument.location.reload()
 		</script>
-
 	</div>
-
 	<div>
 		<br>
 		<br>
 		<br>
-
 		<h2>Security</h2>
-
 		<br>
-
 		<table>
 			<tr>
 				<td>
@@ -217,8 +202,6 @@
 									
 									{% endif %}
 								<div>
-
-
 						
 								</td>
 				<td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
@@ -229,7 +212,6 @@
 				</td>
 			</tr>
 		</table>
-
 		<div></div>
 		<br>
 		<br>
@@ -249,11 +231,9 @@
 					<a style="color: crimson;" href="/securityAlarm/On"class="button">Activate Alarm</a>
 					<a style="color: crimson;" href="/securityAlarm/Off"class="button">Deactivate Alarm</a>
 				</td>
-
 			</tr>
 		</table>
 	</div>
-
 	<table>
 		<tr>
 			<td>
@@ -264,12 +244,8 @@
 			</td>
 		</tr>
 		</table>
-				
-				
-
 				<div  id="Container" style="height:300px;width:700px;overflow:auto;border:5px solid red;padding:1%">
 
-						
 					{% if camera_Sts == 'On' and security_log_messages %}
 
 						{% for message in security_log_messages %}
@@ -289,13 +265,8 @@
 					{% endif %}
 						
 				</div>
-
-	
-	
-
 	<br>
 	<br>
-
 	
    </body>
 </html>

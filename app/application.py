@@ -16,7 +16,7 @@ def create_app(*, config_object):
     # Basic Authentication ("Sign in" security to have access to the app)
     basic_auth = BasicAuth(flask_app)
 
-    # import blueprints
+    # Import blueprints
     from app.controller import app
     flask_app.register_blueprint(app)
     logger.info('Application instance created')

@@ -64,6 +64,7 @@ RELAY_4 = 19
 RELAYS_WITH_AUTO = [RELAY_2]
 RELAYS_WITH_TIMER = [RELAY_1, RELAY_2, RELAY_3, RELAY_4]
 
+
 # Logger
 FORMAT_MAIN_LOGGER = logging.Formatter(
     "%(asctime)s — %(name)s — %(levelname)s —"
@@ -154,7 +155,6 @@ def config_logger(logger, type="main"):
 
 
 # Security Alarm
-
 surveillance_config = {
     "use_dropbox": False,
     "email_alert": True,

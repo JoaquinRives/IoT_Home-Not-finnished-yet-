@@ -77,12 +77,11 @@ class Raspberry1:
         self.data_collection_thread = None
 
         # Security alarm logging
-       # TODO change path
         with open(config.SECURITY_SYSTEM_LOG_FILE, 'r') as f:
             self.number_of_lines = sum([1 for line in f])
             self.end_positon = f.seek(0, os.SEEK_END)
-            self.security_log_messages = [] # List of new messages to display in the Security Log textbox of index.html
-
+            # List of new messages to display in the Security Log textbox of index.html
+            self.security_log_messages = [] 
 
 
     def set_relays(self):
@@ -101,43 +100,6 @@ class Raspberry1:
         self.set_status(self.relay2, 'normal')
         self.set_status(self.relay3, 'normal')
         self.set_status(self.relay4, 'normal')
-
-
-    def security_log_updater(self):
-        """ 
-        Returns the messages to display in the scrollable 
-        textbox of the security log (index.html)
-        """
-        last_number_of_lines = self.number_of_lines 
-        last_end_position = self.end_positon 
-    
-        try:
-            # TODO change path
-            with open(config.SECURITY_SYSTEM_LOG_FILE, 'r') as f:
-                # Count the current number of lines
-                number_of_lines_now = sum([1 for line in f])
-
-                # Check if something has been added since last time
-                if number_of_lines_now > last_number_of_lines:
-                    # Set the pointer before the new lines
-                    f.seek(last_end_position, 0)
-                    
-                    # Append the new messages to the alarm_log list
-                    for line in f.readlines():
-                        self.security_log_messages.append(line)
-
-                    # Update the number of lines and the end position
-                    self.number_of_lines = number_of_lines_now
-                    self.end_positon = f.seek(0, os.SEEK_END)
-                    
-                    return self.security_log_messages[::-1]
-
-                else:
-                    return self.security_log_messages[::-1]
-        
-        except Exception as e:
-            self.security_log_messages.append(e)
-
 
     
     def set_gpio(self, gpio, output): 
@@ -161,7 +123,6 @@ class Raspberry1:
 
 
     def auto_mode(self, actuator, temp, t_range):
-        
         # Temperature we want to maintain constant
         t_keep = int(temp)
         t_max, t_min = t_keep + int(t_range),  t_keep - int(t_range)
@@ -170,7 +131,7 @@ class Raspberry1:
 
         while getattr(t, "do_run", True):
             # Get current temperature
-            t_now = int(self.get_sensorhub_data()["off-chip temperature"]) #TODO
+            t_now = int(self.get_sensorhub_data()["off-chip temperature"])
 
             if int(t_now) > int(t_max):
                 # Turn off if the temperature goes above the limit
@@ -269,6 +230,7 @@ class Raspberry1:
             self.surveillance_thread.start()
             
             self.security_log_messages = [] 
+            
             flash("Security Alarm activated!")
             logger.info("Security Alarm activated!")
             security_system_logger.info("Security Alarm activated!")
@@ -288,14 +250,11 @@ class Raspberry1:
                     done = False
             
             self.pi_camera_Sts = 'Off' 
-                  
-
 
             flash("Security Alarm deactivated!")
             logger.info("Security Alarm deactivated!")
             security_system_logger.info("Security Alarm deactivated!")
             
-
     
     def pi_surveillance(self, pi_camera):
         warnings.filterwarnings("ignore")
@@ -323,7 +282,6 @@ class Raspberry1:
 
         motionCounter = 0
 
-
         for f in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
             # grab the raw NumPy array representing the image and initialize
             # the timestamp and occupied/unoccupied text
@@ -342,9 +300,8 @@ class Raspberry1:
                 rawCapture.truncate(0)
                 continue
 
-            # accumulate the weighted average between the current frame and
-            # previous frames, then compute the difference between the current
-            # frame and running average
+            # accumulate the weighted average between the current frame and previous frames,
+            # then compute the difference between the current frame and running average
             cv2.accumulateWeighted(gray, avg, 0.5)
             frameDelta = cv2.absdiff(gray, cv2.convertScaleAbs(avg))
 
@@ -363,8 +320,7 @@ class Raspberry1:
                 if cv2.contourArea(c) < config.surveillance_config["min_area"]:
                     continue
 
-                # compute the bounding box for the contour, draw it on the frame,
-                # and update the text
+                # compute the bounding box for the contour, draw it on the frame, and update the text
                 (x, y, w, h) = cv2.boundingRect(c)
                 cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
                 text = "Occupied"
@@ -383,8 +339,7 @@ class Raspberry1:
                     # increment the motion counter
                     motionCounter += 1
 
-                    # check to see if the number of frames with consistent motion is
-                    # high enough
+                    # check to see if the number of frames with consistent motion is high enough
                     if motionCounter >= config.surveillance_config["min_motion_frames"]:
                         logger.info('Security Alarm: Movement detected!')
                         security_system_logger.info('Movement detected in the room!')
@@ -413,16 +368,15 @@ class Raspberry1:
 
                         if config.surveillance_config["email_alert"]:
                             if (timestamp - lastEmailed).seconds >= config.surveillance_config["min_email_seconds"]:
-                                # TODO: insert my link to dropbox
+                                
                                 # Send email notification with the most recent captures
-                                # TODO: Uncomment this
-                                # email_sender.send_email(
-                                #     subject="Security Alarm",
-                                #     message=f"The Surveillance Camera detected movement in your room.. \n
-                                #             "Dropbox Security Alarm: {config.surveillance_config["dropbox_base_path"]}
-                                #     attach_images=recent_captures[:config.surveillance_config["max_images_email"]]
-                                # )
-                                logger.info(f"Notification email sent: {str(recent_captures[:5])}")  # TODO
+                                email_sender.send_email(
+                                    subject="Security Alarm",
+                                    message=f"The Surveillance Camera detected movement in your room.. \n
+                                            f"Dropbox Security Alarm: {config.surveillance_config["dropbox_base_path"]}
+                                    attach_images=recent_captures[:config.surveillance_config["max_images_email"]]
+                                )
+                                logger.info(f"Email security notification sent to {config.TO_ADDR}")
                                 security_system_logger.info(f"Email notification sent to '{config.TO_ADDR}'")
                                 
                                 # update the last_emailed timestamp and recent_captures
@@ -440,6 +394,41 @@ class Raspberry1:
             # clear the stream in preparation for the next frame
             rawCapture.truncate(0)
              
+
+    def security_log_updater(self):
+        """ 
+        Returns the messages to display in the scrollable 
+        textbox of the security log (index.html)
+        """
+        last_number_of_lines = self.number_of_lines 
+        last_end_position = self.end_positon 
+    
+        try:
+            # TODO change path
+            with open(config.SECURITY_SYSTEM_LOG_FILE, 'r') as f:
+                # Count the current number of lines
+                number_of_lines_now = sum([1 for line in f])
+
+                # Check if something has been added since last time
+                if number_of_lines_now > last_number_of_lines:
+                    # Set the pointer before the new lines
+                    f.seek(last_end_position, 0)
+                    
+                    # Append the new messages to the alarm_log list
+                    for line in f.readlines():
+                        self.security_log_messages.append(line)
+
+                    # Update the number of lines and the end position
+                    self.number_of_lines = number_of_lines_now
+                    self.end_positon = f.seek(0, os.SEEK_END)
+                    
+                    return self.security_log_messages[::-1]
+
+                else:
+                    return self.security_log_messages[::-1]
+        
+        except Exception as e:
+            self.security_log_messages.append(e)
 
 
     def get_sensorhub_data(self):
@@ -484,10 +473,10 @@ class Raspberry1:
         
         # Light intensity detection
         if aReceiveBuf[STATUS_REG] & 0x04 :
-            #main_logger.warning("Onboard brightness sensor overrange!")
+            # main_logger.warning("Onboard brightness sensor overrange!")
             data["brightness"] = 'nan'
         elif aReceiveBuf[STATUS_REG] & 0x08 :
-            #main_logger.warning("Onboard brightness sensor failure!")
+            # main_logger.warning("Onboard brightness sensor failure!")
             data["brightness"] = 'nan'
         else :
             data["brightness"] = str((aReceiveBuf[LIGHT_REG_H] << 8 | aReceiveBuf[LIGHT_REG_L]))
@@ -551,8 +540,6 @@ class Raspberry1:
             data = []
             data.append(str(datetime.datetime.now()))
 
-            # TODO: delete prints
-
             # Thermal infrarred
             for i in range(TEMP_REG,HUMAN_DETECT + 1):
                 aReceiveBuf.append(bus.read_byte_data(DEVICE_ADDR, i))
@@ -565,7 +552,6 @@ class Raspberry1:
                 sensor_logger.warning("No external temperature sensor!")
                 data.append('nan')
             else :
-                #print("Current off-chip sensor temperature = %d Celsius" % aReceiveBuf[TEMP_REG])
                 data.append(str(aReceiveBuf[TEMP_REG]))
             
             # Light intensity detection
@@ -576,15 +562,12 @@ class Raspberry1:
                 #sensor_logger.warning("Onboard brightness sensor failure!")
                 data.append('nan')
             else :
-                #print("Current onboard sensor brightness = %d Lux" % (aReceiveBuf[LIGHT_REG_H] << 8 | aReceiveBuf[LIGHT_REG_L]))
                 data.append(str((aReceiveBuf[LIGHT_REG_H] << 8 | aReceiveBuf[LIGHT_REG_L])))
 
             # OnBoard temperature sensor
-            #print("Current onboard sensor temperature = %d Celsius" % aReceiveBuf[ON_BOARD_TEMP_REG])
             data.append(str(aReceiveBuf[ON_BOARD_TEMP_REG]))
 
             # Humidity sensor
-            #print("Current onboard sensor humidity = %d %%" % aReceiveBuf[ON_BOARD_HUMIDITY_REG])
             data.append(str(aReceiveBuf[ON_BOARD_HUMIDITY_REG]))
 
             if aReceiveBuf[ON_BOARD_SENSOR_ERROR] != 0 :
@@ -592,9 +575,7 @@ class Raspberry1:
 
             # Pressure sensor
             if aReceiveBuf[BMP280_STATUS] == 0 :
-                #print("Current barometer temperature = %d Celsius" % aReceiveBuf[BMP280_TEMP_REG])
                 data.append(str(aReceiveBuf[BMP280_TEMP_REG]))
-                #print("Current barometer pressure = %d pascal" % (aReceiveBuf[BMP280_PRESSURE_REG_L] | aReceiveBuf[BMP280_PRESSURE_REG_M] << 8 | aReceiveBuf[BMP280_PRESSURE_REG_H] << 16))
                 data.append(str((aReceiveBuf[BMP280_PRESSURE_REG_L] | aReceiveBuf[BMP280_PRESSURE_REG_M] << 8 | aReceiveBuf[BMP280_PRESSURE_REG_H] << 16)))
             else :
                 sensor_logger.warning("Onboard barometer works abnormally!")
@@ -603,10 +584,8 @@ class Raspberry1:
 
             # Human detection
             if aReceiveBuf[HUMAN_DETECT] == 1 :
-                #print("Live body detected within 5 seconds!")
                 data.append('1')
             else:
-                #print("No humans detected!")
                 data.append('0')
 
             data_row = ";".join(data) + "\n"

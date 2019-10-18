@@ -21,14 +21,9 @@ rp1 = Raspberry1()
 # Start collecting data from the sensors
 rp1.start_data_collection()
 
-# Create chart and keep it updated
+# Create the chart with the sensors data and keep it updated
 chart_thread = threading.Thread(target=create_chart, args=(config.CHART_SETTINGS_1,))
 chart_thread.start()
-
-# TODO delete
-# Initializing outputFrame and lock for the live webcam thread
-# outputFrame = None
-# lock = threading.Lock()
 
 
 def before_exit():
@@ -91,7 +86,6 @@ def index():
 
     # Scrollable textbox of the security log
     security_log_messages = rp1.security_log_updater()
-        
 
     # Read Status and pass everything to the index.html
     template_data = {
@@ -116,8 +110,7 @@ def index():
 
 @app.route("/video_feed")
 def video_feed():
-    # return the response generated along with the specific media
-    # type (mime type)
+    # Return the response generated along with the specific media type (mime type)
     return Response(generate_video_feed(),
                     mimetype="multipart/x-mixed-replace; boundary=frame")
 

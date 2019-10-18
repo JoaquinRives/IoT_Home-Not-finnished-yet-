@@ -19,13 +19,8 @@ class EmailSender:
         self.to_addr = config.TO_ADDR
         self.smtp_server = config.SMTP_SERVER 
 
-    def send_email(self, subject, message, attach_images=None):
 
-        # TODO:
-        # - Add msg templates to the config file
-        # - Rearrange the arguments of this function
-        # - Add date and time to de msg
-        # - Log everything
+    def send_email(self, subject, message, attach_images=None):
 
         # Email multiple part object
         msg = MIMEMultipart()
