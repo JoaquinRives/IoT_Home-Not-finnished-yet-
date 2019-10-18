@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import SubmitField, BooleanField, DateTimeField, validators, IntegerField
+from wtforms import BooleanField, DateTimeField, validators, IntegerField
 
 
 class Timer_form(FlaskForm):

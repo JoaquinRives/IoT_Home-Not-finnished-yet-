@@ -63,8 +63,8 @@ def create_chart(chart_settings):
                     trace = go.Scatter(
                         x=x_axis,
                         y=signal.savgol_filter(df[feature],  # Smoothing
-                                            11,  # window size used for filtering
-                                            3),  # order of fitted polynomial
+                                            11,  # Window size used for filtering
+                                            3),  # Order of fitted polynomial
                         mode=chart_settings["format"][feature]['mode'],
                         line=chart_settings["format"][feature]['line'],
                         name=chart_settings["format"][feature]['name'])
@@ -72,8 +72,8 @@ def create_chart(chart_settings):
                     trace = go.Scatter(
                         x=x_axis,
                         y=signal.savgol_filter(df[feature],  # Smoothing
-                                            11,  # window size used for filtering
-                                            3),  # order of fitted polynomial
+                                            11,  # Window size used for filtering
+                                            3),  # Order of fitted polynomial
                         mode='lines',
                         line=dict(dash='solid', color='red'),
                         name=feature)

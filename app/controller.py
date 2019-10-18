@@ -295,7 +295,7 @@ def set_auto():
 
         # Check if the Timer is running:
         if rp1.timer_threads[actuator]:
-                    rp1.stop_timer(actuator)
+            rp1.stop_timer(actuator)
 
     return redirect(f"/{deviceName}/{unit}/auto")
 

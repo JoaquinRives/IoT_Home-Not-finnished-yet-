@@ -17,8 +17,7 @@ class EmailSender:
         self.from_addr = config.FROM_ADDR
         self.password = config.PASSWORD
         self.to_addr = config.TO_ADDR
-        self.smtp_server = config.SMTP_SERVER 
-
+        self.smtp_server = config.SMTP_SERVER
 
     def send_email(self, subject, message, attach_images=None):
 
@@ -32,7 +31,7 @@ class EmailSender:
         images_html = None
         if attach_images:
             list_images = []
-            for img_id, image in enumerate(attach_images):    
+            for img_id, image in enumerate(attach_images):
                 with open(image, 'rb') as f:
                     mime = MIMEBase(os.path.splitext(image)[0], os.path.splitext(image)[1],
                                     filename=os.path.basename(image))
@@ -45,7 +44,7 @@ class EmailSender:
                     # Add object to MIMEMultipart object
                     msg.attach(mime)
                     list_images.append("<p><img src='cid:" + str(img_id) + "'></p>")
-            
+
             images_html = " \n ".join(list_images)
 
         # Add object to MIMEMultipart object

@@ -1,21 +1,14 @@
 from flask import flash
 import RPi.GPIO as GPIO
-import time
-import threading
 from app.timer import timer_func
-from app.config import config
 from app.camera_management import detect_motion, pi_surveillance
 from imutils.video import VideoStream
 from picamera import PiCamera
-import logging
 import smbus
-import datetime
 import os
-from app.pyimagesearch.motion_detection import SingleMotionDetector
 from app.pyimagesearch.tempimage import TempImage
 from picamera.array import PiRGBArray
 from app.config import config
-from app.emailer_classes import EmailSender
 import warnings
 import threading
 import dropbox
@@ -24,7 +17,9 @@ import imutils
 import time
 import cv2
 import logging
+from emailer_classes import EmailSender
 
+email_sender = EmailSender()
 
 logger = logging.getLogger(__name__)
 logger = config.config_logger(logger, type='main')
@@ -34,6 +29,8 @@ sensor_logger = config.config_logger(sensor_logger, type="sensor")
 
 security_system_logger = logging.getLogger("security_logger")
 security_system_logger = config.config_logger(security_system_logger, type="security_system")
+
+
 
 
 class Raspberry1:
@@ -81,7 +78,7 @@ class Raspberry1:
             self.number_of_lines = sum([1 for line in f])
             self.end_positon = f.seek(0, os.SEEK_END)
             # List of new messages to display in the Security Log textbox of index.html
-            self.security_log_messages = [] 
+            self.security_log_messages = []
 
 
     def set_relays(self):
@@ -101,8 +98,8 @@ class Raspberry1:
         self.set_status(self.relay3, 'normal')
         self.set_status(self.relay4, 'normal')
 
-    
-    def set_gpio(self, gpio, output): 
+
+    def set_gpio(self, gpio, output):
         """ Set GPIO output """
         if output == 'low':
             GPIO.output(gpio, GPIO.LOW)
@@ -114,11 +111,11 @@ class Raspberry1:
         OnOff = 'On' if GPIO.input(gpio) == 0 else 'Off'  # Get current input (HIGH/LOW = 1/0 = Off/On)
         self.gpios_Sts[gpio] = (OnOff, mode)  # (Off/On, normal/timer/auto)
 
-    
+
     def get_status(self, gpio):
         OnOff = 'On' if GPIO.input(gpio) == 0 else 'Off'  # Get current input (HIGH/LOW = 1/0 = Off/On)
         mode = self.gpios_Sts[gpio][1]  # Get mode (normal/timer/auto)
-        
+
         return (OnOff, mode)
 
 
@@ -148,21 +145,23 @@ class Raspberry1:
 
 
     def start_timer(self, gpio):
-        self.timer_threads[gpio] = threading.Thread(target=timer_func, args=((gpio,) + self.timer_settings[gpio]))
+        self.timer_threads[gpio] = threading.Thread(
+            target=timer_func, args=((gpio,) + self.timer_settings[gpio]))
         self.timer_threads[gpio].start()
         self.set_status(gpio, 'timer')
-        
+
         flash(f'Timer activated: {self.timer_settings[gpio][0]} (ON) - {self.timer_settings[gpio][1]} (Off), '
                 f'Repeat: {self.timer_settings[gpio][2]}')
         logger.info(f'Timer activated: {self.timer_settings[gpio][0]} (ON) - {self.timer_settings[gpio][1]} (Off), '
                 f'Repeat: {self.timer_settings[gpio][2]}')
-        
+
 
     def start_auto(self, gpio):
-        self.auto_threads[gpio] = threading.Thread(target=self.auto_mode, args=((gpio,) + self.auto_settings[gpio]))
+        self.auto_threads[gpio] = threading.Thread(
+            target=self.auto_mode, args=((gpio,) + self.auto_settings[gpio]))
         self.auto_threads[gpio].start()
         self.set_status(gpio, 'auto')
-        
+
         flash(f'Auto-Mode activated : {self.auto_settings[gpio][0]}∓{self.auto_settings[gpio][1]} C°')
         logger.info(f'Auto-Mode activated : {self.auto_settings[gpio][0]}∓{self.auto_settings[gpio][1]} C°')
 
@@ -173,7 +172,7 @@ class Raspberry1:
             self.timer_threads[gpio].join()
             self.timer_threads[gpio] = None
             self.set_status(gpio, 'normal')
-            
+
             flash("Timer deactivated!")
             logger.info("Timer deactivated!")
 
@@ -184,7 +183,7 @@ class Raspberry1:
             self.auto_threads[gpio].join()
             self.auto_threads[gpio] = None
             self.set_status(gpio, 'normal')
-            
+
             flash("Auto-Mode deactivated!")
             logger.info("Auto-Mode deactivated!")
 
@@ -192,20 +191,20 @@ class Raspberry1:
     def start_webcam(self):
         if self.pi_camera_Sts == 'On':
             self.stop_surveillance()
-        
-        if  self.webcam_Sts == 'Off':  
+
+        if self.webcam_Sts == 'Off':
             self.vs = VideoStream(src=0).start()
             self.webcam_Sts = 'On'
-            
+
             self.webcam_thread = threading.Thread(target=detect_motion, args=(36, self.vs,))
             self.webcam_thread.daemon = True
             self.webcam_thread.start()
-            
+
             logger.info("Webcam activated!")
 
 
     def stop_webcam(self):
-        if  self.webcam_Sts == 'On':
+        if self.webcam_Sts == 'On':
             self.vs.stop()
             self.vs = None
             self.webcam_Sts = 'Off'
@@ -213,7 +212,7 @@ class Raspberry1:
             self.webcam_thread.do_run = False
             self.webcam_thread.join()
             self.webcam_thread = None
-            
+
             logger.info("Webcam deactivated!")
 
 
@@ -228,16 +227,16 @@ class Raspberry1:
             self.surveillance_thread = threading.Thread(target=self.pi_surveillance, args=(self.pi_camera,))
             self.surveillance_thread.daemon = True
             self.surveillance_thread.start()
-            
-            self.security_log_messages = [] 
-            
+
+            self.security_log_messages = []
+
             flash("Security Alarm activated!")
             logger.info("Security Alarm activated!")
             security_system_logger.info("Security Alarm activated!")
 
 
     def stop_surveillance(self):
-        if self.pi_camera_Sts == 'On':   
+        if self.pi_camera_Sts == 'On':
             done = False
             while not done:
                 try:
@@ -248,29 +247,29 @@ class Raspberry1:
                 except:
                     logger.warning("Exception regarding the buffer when closing pi_camera")
                     done = False
-            
-            self.pi_camera_Sts = 'Off' 
+
+            self.pi_camera_Sts = 'Off'
 
             flash("Security Alarm deactivated!")
             logger.info("Security Alarm deactivated!")
             security_system_logger.info("Security Alarm deactivated!")
-            
-    
+
+
     def pi_surveillance(self, pi_camera):
         warnings.filterwarnings("ignore")
 
         if config.surveillance_config["use_dropbox"]:
-            # connect to dropbox and start the session authorization process
+            # Connect to dropbox and start the session authorization process
             client = dropbox.Dropbox(config.surveillance_config["dropbox_access_token"])
             logger.info("dropbox account linked")
 
-        # initialize the camera and grab a reference to the raw camera capture
+        # Initialize the camera and grab a reference to the raw camera capture
         camera = pi_camera
         camera.resolution = tuple(config.surveillance_config["resolution"])
         camera.framerate = config.surveillance_config["fps"]
         rawCapture = PiRGBArray(camera, size=tuple(config.surveillance_config["resolution"]))
 
-        # allow the camera to warmup, then initialize the average frame, last
+        # Allow the camera to warmup, then initialize the average frame, last
         # uploaded timestamp, and frame motion counter
         logger.info("warming up camera...")
         time.sleep(config.surveillance_config["camera_warmup_time"])
@@ -283,29 +282,29 @@ class Raspberry1:
         motionCounter = 0
 
         for f in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
-            # grab the raw NumPy array representing the image and initialize
+            # Grab the raw NumPy array representing the image and initialize
             # the timestamp and occupied/unoccupied text
             frame = f.array
             timestamp = datetime.datetime.now()
             text = "Unoccupied"
 
-            # resize the frame, convert it to grayscale, and blur it
+            # Resize the frame, convert it to grayscale, and blur it
             frame = imutils.resize(frame, width=500)
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             gray = cv2.GaussianBlur(gray, (21, 21), 0)
 
-            # if the average frame is None, initialize it
+            # If the average frame is None, initialize it
             if avg is None:
                 avg = gray.copy().astype("float")
                 rawCapture.truncate(0)
                 continue
 
-            # accumulate the weighted average between the current frame and previous frames,
+            # Accumulate the weighted average between the current frame and previous frames,
             # then compute the difference between the current frame and running average
             cv2.accumulateWeighted(gray, avg, 0.5)
             frameDelta = cv2.absdiff(gray, cv2.convertScaleAbs(avg))
 
-            # threshold the delta image, dilate the thresholded image to fill
+            # Threshold the delta image, dilate the thresholded image to fill
             # in holes, then find contours on thresholded image
             thresh = cv2.threshold(frameDelta, config.surveillance_config["delta_thresh"], 255,
                                 cv2.THRESH_BINARY)[1]
@@ -314,32 +313,32 @@ class Raspberry1:
                                     cv2.CHAIN_APPROX_SIMPLE)
             cnts = imutils.grab_contours(cnts)
 
-            # loop over the contours
+            # Loop over the contours
             for c in cnts:
-                # if the contour is too small, ignore it
+                # Df the contour is too small, ignore it
                 if cv2.contourArea(c) < config.surveillance_config["min_area"]:
                     continue
 
-                # compute the bounding box for the contour, draw it on the frame, and update the text
+                # Compute the bounding box for the contour, draw it on the frame, and update the text
                 (x, y, w, h) = cv2.boundingRect(c)
                 cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
                 text = "Occupied"
 
-            # draw the text and timestamp on the frame
+            # Draw the text and timestamp on the frame
             ts = timestamp.strftime("%A %d %B %Y %I:%M:%S%p")
             cv2.putText(frame, "Room Status: {}".format(text), (10, 20),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
             cv2.putText(frame, ts, (10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX,
                         0.35, (0, 0, 255), 1)
 
-            # check to see if the room is occupied
+            # Check to see if the room is occupied
             if text == "Occupied":
-                # check to see if enough time has passed between uploads
+                # Check to see if enough time has passed between uploads
                 if (timestamp - lastUploaded).seconds >= config.surveillance_config["min_upload_seconds"]:
-                    # increment the motion counter
+                    # Increment the motion counter
                     motionCounter += 1
 
-                    # check to see if the number of frames with consistent motion is high enough
+                    # Check to see if the number of frames with consistent motion is high enough
                     if motionCounter >= config.surveillance_config["min_motion_frames"]:
                         logger.info('Security Alarm: Movement detected!')
                         security_system_logger.info('Movement detected in the room!')
@@ -347,11 +346,11 @@ class Raspberry1:
                         # Save capture in the surveillance_captures directory
                         cv2.imwrite(f"{config.surveillance_config['captures_folder']}/{ts}.jpg", frame)
                         logger.info(f"Capture saved: {config.surveillance_config['captures_folder']}/{ts}.jpg")
-                        
+
                         # Add capture to recent captures
                         recent_captures= (f"{config.surveillance_config['captures_folder']}/{ts}.jpg",) + recent_captures
-                        
-                        # check to see if dropbox sohuld be used
+
+                        # Check to see if dropbox sohuld be used
                         if config.surveillance_config["use_dropbox"]:
                             # write the image to temporary file
                             t = TempImage()
@@ -368,41 +367,40 @@ class Raspberry1:
 
                         if config.surveillance_config["email_alert"]:
                             if (timestamp - lastEmailed).seconds >= config.surveillance_config["min_email_seconds"]:
-                                
+
                                 # Send email notification with the most recent captures
                                 email_sender.send_email(
                                     subject="Security Alarm",
-                                    message=f"The Surveillance Camera detected movement in your room.. \n
-                                            f"Dropbox Security Alarm: {config.surveillance_config["dropbox_base_path"]}
+                                    message=f"The Surveillance Camera detected movement in your room. \n Dropbox Security Alarm: {config.surveillance_config['dropbox_base_path']}",
                                     attach_images=recent_captures[:config.surveillance_config["max_images_email"]]
                                 )
                                 logger.info(f"Email security notification sent to {config.TO_ADDR}")
                                 security_system_logger.info(f"Email notification sent to '{config.TO_ADDR}'")
-                                
-                                # update the last_emailed timestamp and recent_captures
+
+                                # Update the last_emailed timestamp and recent_captures
                                 lastEmailed = timestamp
                                 recent_captures = tuple()
 
-                        # update the last uploaded timestamp and reset the motion counter
+                        # Update the last uploaded timestamp and reset the motion counter
                         lastUploaded = timestamp
                         motionCounter = 0
 
-            # otherwise, the room is not occupied
+            # Otherwise, the room is not occupied
             else:
                 motionCounter = 0
 
-            # clear the stream in preparation for the next frame
+            # Clear the stream in preparation for the next frame
             rawCapture.truncate(0)
-             
+
 
     def security_log_updater(self):
         """ 
         Returns the messages to display in the scrollable 
         textbox of the security log (index.html)
         """
-        last_number_of_lines = self.number_of_lines 
-        last_end_position = self.end_positon 
-    
+        last_number_of_lines = self.number_of_lines
+        last_end_position = self.end_positon
+
         try:
             # TODO change path
             with open(config.SECURITY_SYSTEM_LOG_FILE, 'r') as f:
@@ -413,7 +411,7 @@ class Raspberry1:
                 if number_of_lines_now > last_number_of_lines:
                     # Set the pointer before the new lines
                     f.seek(last_end_position, 0)
-                    
+
                     # Append the new messages to the alarm_log list
                     for line in f.readlines():
                         self.security_log_messages.append(line)
@@ -421,12 +419,12 @@ class Raspberry1:
                     # Update the number of lines and the end position
                     self.number_of_lines = number_of_lines_now
                     self.end_positon = f.seek(0, os.SEEK_END)
-                    
+
                     return self.security_log_messages[::-1]
 
                 else:
                     return self.security_log_messages[::-1]
-        
+
         except Exception as e:
             self.security_log_messages.append(e)
 
@@ -470,7 +468,7 @@ class Raspberry1:
             data["off_chip_temperature"] = 'nan'
         else :
             data["off_chip_temperature"] = str(aReceiveBuf[TEMP_REG])
-        
+
         # Light intensity detection
         if aReceiveBuf[STATUS_REG] & 0x04 :
             # main_logger.warning("Onboard brightness sensor overrange!")
@@ -513,7 +511,7 @@ class Raspberry1:
 
         t = threading.currentThread()
 
-        while getattr(t, "do_run", True):    
+        while getattr(t, "do_run", True):
             DEVICE_BUS = 1
             DEVICE_ADDR = 0x17
 
@@ -553,7 +551,7 @@ class Raspberry1:
                 data.append('nan')
             else :
                 data.append(str(aReceiveBuf[TEMP_REG]))
-            
+
             # Light intensity detection
             if aReceiveBuf[STATUS_REG] & 0x04 :
                 #sensor_logger.warning("Onboard brightness sensor overrange!")
@@ -571,7 +569,8 @@ class Raspberry1:
             data.append(str(aReceiveBuf[ON_BOARD_HUMIDITY_REG]))
 
             if aReceiveBuf[ON_BOARD_SENSOR_ERROR] != 0 :
-                sensor_logger.warning("Onboard temperature and humidity sensor data may not be up to date!")
+                sensor_logger.warning(
+                    "Onboard temperature and humidity sensor data may not be up to date!")
 
             # Pressure sensor
             if aReceiveBuf[BMP280_STATUS] == 0 :
@@ -602,9 +601,9 @@ class Raspberry1:
                         f.write(data_header)
                 except Exception as e:
                     sensor_logger.warning(f"Failure writing header to sensor_data.txt - Exception: {e}")
-                
+
             # Append row of data to the sensors data file
-            try:            
+            try:
                 with open(sensor_data_file, 'a') as f:
                     f.write(data_row)
 
