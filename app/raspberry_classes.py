@@ -1,7 +1,7 @@
 from flask import flash
 import RPi.GPIO as GPIO
 from app.timer import timer_func
-from app.camera_management import detect_motion, pi_surveillance
+from app.camera_management import detect_motion
 from imutils.video import VideoStream
 from picamera import PiCamera
 import smbus
@@ -17,7 +17,7 @@ import imutils
 import time
 import cv2
 import logging
-from emailer_classes import EmailSender
+from app.emailer_classes import EmailSender
 
 email_sender = EmailSender()
 
@@ -357,13 +357,12 @@ class Raspberry1:
                             cv2.imwrite(t.path, frame)
 
                             # upload the image to Dropbox and cleanup the tempory image
-                            path = "/{base_path}/{timestamp}.jpg".format(
-                                base_path=config.surveillance_config["dropbox_base_path"], timestamp=ts)
+                            path = "/{timestamp}.jpg".format(timestamp=ts)
                             client.files_upload(open(t.path, "rb").read(), path)
                             t.cleanup()
 
                             logger.info("Dropbox upload: {}".format(ts))
-                            security_system_logger.info(f"Capture uploaded to Dropbox: {path}")
+                            security_system_logger.info(f"Capture uploaded to Dropbox: www.{config.surveillance_config['dropbox_base_path']}")
 
                         if config.surveillance_config["email_alert"]:
                             if (timestamp - lastEmailed).seconds >= config.surveillance_config["min_email_seconds"]:
@@ -371,7 +370,7 @@ class Raspberry1:
                                 # Send email notification with the most recent captures
                                 email_sender.send_email(
                                     subject="Security Alarm",
-                                    message=f"The Surveillance Camera detected movement in your room. \n Dropbox Security Alarm: {config.surveillance_config['dropbox_base_path']}",
+                                    message=f"The Surveillance Camera detected movement in your room. <br> {config.surveillance_config['dropbox_base_path']}",
                                     attach_images=recent_captures[:config.surveillance_config["max_images_email"]]
                                 )
                                 logger.info(f"Email security notification sent to {config.TO_ADDR}")

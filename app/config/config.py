@@ -156,11 +156,11 @@ def config_logger(logger, type="main"):
 
 # Security Alarm
 surveillance_config = {
-    "use_dropbox": False,
+    "use_dropbox": True,
     "email_alert": True,
     "captures_folder": SURVEILLANCE_CAPTURES_DIR,
-    "dropbox_access_token": "YOUR_DROPBOX_ACCESS_TOKEN",
-    "dropbox_base_path": "https://www.dropbox.com/home/Apps/rpi_iot_home/home/Apps/rpi_iot_home",
+    "dropbox_access_token": "YOUR DROPBOX ACCESS TOKEN",  # TODO
+    "dropbox_base_path": "dropbox.com/home/Apps/rpi_iot_home",
     "min_upload_seconds": 3.0,
     "min_email_seconds": 30.0,
     "max_images_email": 5,
@@ -174,7 +174,7 @@ surveillance_config = {
 
 # Email Notifications
 FROM_ADDR = 'joaquin.raspberry.pi.1@gmail.com'
-PASSWORD = 'password'  # TODO: replace with the real password
+PASSWORD = 'YOUR PASSWORD'  # TODO
 TO_ADDR = 'joakin9408@gmail.com'
 SMTP_SERVER = 'Smtp.gmail.com:587'
 
