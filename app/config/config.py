@@ -159,7 +159,7 @@ surveillance_config = {
     "use_dropbox": True,
     "email_alert": True,
     "captures_folder": SURVEILLANCE_CAPTURES_DIR,
-    "dropbox_access_token": "YOUR DROPBOX ACCESS TOKEN",  # TODO
+    "dropbox_access_token": "your token",
     "dropbox_base_path": "dropbox.com/home/Apps/rpi_iot_home",
     "min_upload_seconds": 3.0,
     "min_email_seconds": 30.0,
@@ -174,7 +174,7 @@ surveillance_config = {
 
 # Email Notifications
 FROM_ADDR = 'joaquin.raspberry.pi.1@gmail.com'
-PASSWORD = 'YOUR PASSWORD'  # TODO
+PASSWORD = 'your password'  # TODO
 TO_ADDR = 'joakin9408@gmail.com'
 SMTP_SERVER = 'Smtp.gmail.com:587'
 
