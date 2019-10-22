@@ -1,4 +1,4 @@
-# IoT Home (Not finnished yet)
+# IoT Home
 A project I am working on for home automation with a Raspberry Pi 3
 
 App to control things at home from anywhere using a Raspberry pi 3 and Flask. On this project I am making use of different sensors to collect data and perform multiple tasks. I will also program the GPIOs of the RPi to control a 4 Channel Relay that can be connected to any appliances. 
@@ -24,11 +24,13 @@ The commands to the RPi will be sent using a simple webpage by creating a local 
       o	Light Intensity Detection
       o	Motion Detection
 
+
 => Testing the App (Video)
 
 [![Watch the video](/app/static/screenshot_video.png?raw=true "Screenshot Video")](https://youtu.be/laLAe-Fh5wk)
 
-=> Pictures
+
+=> Screenshots
 
 ![alt text](/app/static/screenshot1.png?raw=true "Screenshot 1")
 ![alt text](/app/static/screenshot2.png?raw=true "Screenshot 2")
