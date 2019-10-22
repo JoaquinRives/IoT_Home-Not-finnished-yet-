@@ -1,8 +1,8 @@
 # IoT Home
-A project I am working on for home automation with a Raspberry Pi 3
+Project for home automation with a Raspberry Pi 3
 
-App to control things at home from anywhere using a Raspberry pi 3 and Flask. On this project I am making use of different sensors to collect data and perform multiple tasks. I will also program the GPIOs of the RPi to control a 4 Channel Relay that can be connected to any appliances. 
-The commands to the RPi will be sent using a simple webpage by creating a local Web server on the Raspberry Pi. I am using Python and Flask for this project.
+App to control things at home from anywhere using a Raspberry Pi 3. On this project I make use of different sensors to collect data and a Raspberry Pi Camera 5MP for surveillance. The GPIOs of the RPi are also programmed to control a 4 Channel Relay that can be connected to any appliances. 
+The commands to the RPi are sent using a simple webpage by creating a local Web server on the Raspberry Pi. Python and Flask were used for this project.
 
 => Features:
   -	Temperature, humidity and atmospheric pressure monitoring.
