@@ -24,13 +24,15 @@ The commands to the RPi will be sent using a simple webpage by creating a local 
       o	Light Intensity Detection
       o	Motion Detection
 
-=> Testing the App (Video)  #TODO
+=> Testing the App (Video)
 
-=> Pictures  #TODO
+[![Watch the video](/app/static/screenshot_video.png?raw=true "Screenshot Video)](https://youtu.be/laLAe-Fh5wk)
+
+=> Pictures
 
 ![alt text](/app/static/screenshot1.png?raw=true "Screenshot 1")
-![alt text](https://github.com/JoaquinRives/IoT_Home_RPi/tree/master/app/static/screenshot2.png)
-![alt text](https://github.com/JoaquinRives/IoT_Home_RPi/tree/master/app/static/screenshot3.png)
+![alt text](/app/static/screenshot2.png?raw=true "Screenshot 2")
+![alt text](/app/static/screenshot3.png?raw=true "Screenshot 3")
 
 
 => Accessing the server from outside the local network:
