@@ -28,7 +28,7 @@ The commands to the RPi will be sent using a simple webpage by creating a local 
 
 => Pictures  #TODO
 
-![alt text](https://github.com/JoaquinRives/IoT_Home_RPi/tree/master/app/static/screenshot1.png)
+![alt text](/app/static/screenshot1.png?raw=true "Screenshot 1")
 ![alt text](https://github.com/JoaquinRives/IoT_Home_RPi/tree/master/app/static/screenshot2.png)
 ![alt text](https://github.com/JoaquinRives/IoT_Home_RPi/tree/master/app/static/screenshot3.png)
 
