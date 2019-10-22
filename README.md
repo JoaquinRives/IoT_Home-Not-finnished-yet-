@@ -26,7 +26,7 @@ The commands to the RPi will be sent using a simple webpage by creating a local 
 
 => Testing the App (Video)
 
-[![Watch the video](/app/static/screenshot_video.png?raw=true "Screenshot Video)](https://youtu.be/laLAe-Fh5wk)
+[![Watch the video](/app/static/screenshot_video.png?raw=true "Screenshot Video")](https://youtu.be/laLAe-Fh5wk)
 
 => Pictures
 
