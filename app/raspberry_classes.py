@@ -128,7 +128,7 @@ class Raspberry1:
 
         while getattr(t, "do_run", True):
             # Get current temperature
-            t_now = int(self.get_sensorhub_data()["off-chip temperature"])
+            t_now = int(self.get_sensorhub_data()["off_chip_temperature"])
 
             if int(t_now) > int(t_max):
                 # Turn off if the temperature goes above the limit
