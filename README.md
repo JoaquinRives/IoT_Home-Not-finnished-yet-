@@ -33,8 +33,7 @@ The commands to the RPi are sent using a simple webpage by creating a local Web 
 => Screenshots
 
 ![alt text](/app/static/screenshot1.png?raw=true "Screenshot 1")
-![alt text](/app/static/screenshot2.png?raw=true "Screenshot 2")
-![alt text](/app/static/screenshot3.png?raw=true "Screenshot 3")
+![alt text](/app/static/screenshot3.png?raw=true "Screenshot 2")
 
 
 => Accessing the server from outside the local network:
@@ -61,3 +60,8 @@ Additional:
   https://www.amazon.co.uk/gp/product/B07PMQK528/ref=ppx_yo_dt_b_asin_title_o01_s00?ie=UTF8&psc=1
   -	Sensor Hub: 
   https://www.amazon.co.uk/gp/product/B07TZD8B61/ref=ppx_yo_dt_b_asin_title_o01_s00?ie=UTF8&psc=1
+
+
+![alt text](/app/static/photo1.png?raw=true "photo 1")
+![alt text](/app/static/photo2.png?raw=true "photo 2")
+![alt text](/app/static/photo3.png?raw=true "photo 3")
