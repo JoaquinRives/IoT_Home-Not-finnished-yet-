@@ -32,8 +32,8 @@ The commands to the RPi are sent using a simple webpage by creating a local Web 
 
 => Screenshots
 
-![alt text](/app/static/screenshot1.png?raw=true "Screenshot 1")
-![alt text](/app/static/screenshot3.png?raw=true "Screenshot 2")
+![alt text](/app/static/screenshot1.jpg?raw=true "Screenshot 1")
+![alt text](/app/static/screenshot3.jpg?raw=true "Screenshot 2")
 
 
 => Accessing the server from outside the local network:
