@@ -64,4 +64,4 @@ Additional:
 
 ![alt text](/app/static/photo1.jpg?raw=true "photo 1")
 ![alt text](/app/static/photo2.jpg?raw=true "photo 2")
-![alt text](/app/static/photo3.jpg?raw=true "photo 3")
+
