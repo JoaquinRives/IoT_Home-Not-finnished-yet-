@@ -1,6 +1,6 @@
 # rpi.gpio (sudo apt-get install rpi.gpio)
 
-python==3.7.3
+#python==3.7.3
 pytest
 opencv-python
 imutils
