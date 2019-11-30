@@ -1,6 +1,5 @@
 # rpi.gpio (sudo apt-get install rpi.gpio)
 
-
 pytest
 opencv-python
 imutils
