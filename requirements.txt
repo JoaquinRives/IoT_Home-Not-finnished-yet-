@@ -1,7 +1,7 @@
-# rpi.gpio (sudo apt-get install rpi.gpio)
+# sudo apt-get install rpi.gpio
+# sudo apt-get install python3-opencv
 
 pytest
-opencv-python
 imutils
 dropbox
 flask==1.0.2
@@ -9,7 +9,6 @@ flask-basicauth
 flask-wtf
 wtforms
 datetime
-azure-iot-device  ????
 smbus
 plotly
 scipy
