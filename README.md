@@ -18,14 +18,9 @@ The commands to the RPi are sent using a simple webpage by creating a local Web 
   -	Raspberry Pi 3 B with Raspbian OS
   -	4 Channel Relay (5V Active Low - Output AC 250V)
   -	Raspberry camera module 5MP 
-  -	Sensor Hub:
-      o	Temperature and Humidity
-      o	Atmospheric Pressure
-      o	Light Intensity Detection
-      o	Motion Detection
+  -	Sensor Hub:Temperature; Humidity; Atmospheric Pressure; Light Intensity Detection.
 
-
-=> Testing the App (Video)
+=> Demo App (Video)
 
 [![Watch the video](/app/static/screenshot_video.png?raw=true "Screenshot Video")](https://youtu.be/laLAe-Fh5wk)
 
