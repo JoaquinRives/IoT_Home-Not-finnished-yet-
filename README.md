@@ -20,10 +20,6 @@ The commands to the RPi are sent using a simple webpage by creating a local Web 
   -	Raspberry camera module 5MP 
   -	Sensor Hub: Temperature; Humidity; Atmospheric Pressure; Light Intensity Detection.
 
-=> Demo App (Video)
-
-[![Watch the video](/app/static/screenshot_video.png?raw=true "Screenshot Video")](https://youtu.be/laLAe-Fh5wk)
-
 
 => Screenshots
 
